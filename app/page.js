@@ -1,10 +1,22 @@
 "use client";
 
+import { useRef } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PhoneLoginForm from "@/components/auth/PhoneLoginForm";
 
 export default function Home() {
+  const cityScrollRef = useRef(null);
+
+  const scrollCities = (direction) => {
+    if (cityScrollRef.current) {
+      const scrollAmount = 300;
+      cityScrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
   return (
     <main className="min-h-screen bg-white">
       <Header />
@@ -112,7 +124,7 @@ export default function Home() {
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-3xl font-bold text-gray-900">
               Top Hiring Companies
             </h2>
             <a
@@ -234,25 +246,85 @@ export default function Home() {
 
           <div className="flex flex-wrap justify-center gap-4">
             {[
-              { name: "IT & Software", jobs: 500, icon: "💻" },
-              { name: "Marketing", jobs: 320, icon: "📈" },
-              { name: "Sales", jobs: 280, icon: "💼" },
-              { name: "Finance", jobs: 150, icon: "💰" },
-              { name: "HR", jobs: 120, icon: "👔" },
-              { name: "Operations", jobs: 200, icon: "🏢" },
-              { name: "Customer Support", jobs: 180, icon: "📞" },
-              { name: "Content Writing", jobs: 160, icon: "✍️" },
-              { name: "Data Analytics", jobs: 140, icon: "📊" },
-              { name: "Design", jobs: 100, icon: "🎨" },
-              { name: "Engineering", jobs: 250, icon: "⚙️" },
-              { name: "Legal", jobs: 80, icon: "⚖️" },
+              {
+                name: "IT & Software",
+                jobs: 500,
+                icon: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+              },
+              {
+                name: "Marketing",
+                jobs: 320,
+                icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+              },
+              {
+                name: "Sales",
+                jobs: 280,
+                icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+              },
+              {
+                name: "Finance",
+                jobs: 150,
+                icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+              },
+              {
+                name: "HR",
+                jobs: 120,
+                icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z",
+              },
+              {
+                name: "Operations",
+                jobs: 200,
+                icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
+              },
+              {
+                name: "Customer Support",
+                jobs: 180,
+                icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z",
+              },
+              {
+                name: "Content",
+                jobs: 160,
+                icon: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",
+              },
+              {
+                name: "Data Analytics",
+                jobs: 140,
+                icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+              },
+              {
+                name: "Design",
+                jobs: 100,
+                icon: "M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01",
+              },
+              {
+                name: "Engineering",
+                jobs: 250,
+                icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z",
+              },
+              {
+                name: "Legal",
+                jobs: 80,
+                icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3",
+              },
             ].map((category, index) => (
               <a
                 key={index}
                 href={`/jobs?category=${category.name}`}
-                className="group flex items-center gap-2 px-5 py-3 bg-gray-100 hover:bg-red-500 rounded-full transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-lg"
+                className="group flex items-center gap-3 px-6 py-4 bg-gray-100 hover:bg-red-500 rounded-full transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-lg"
               >
-                <span className="text-lg">{category.icon}</span>
+                <svg
+                  className="w-6 h-6 text-red-500 group-hover:text-white transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d={category.icon}
+                  />
+                </svg>
                 <span className="font-medium text-gray-700 group-hover:text-white transition-colors">
                   {category.name}
                 </span>
@@ -265,8 +337,133 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Jobs by City Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">
+            Explore jobs in 400+ cities
+          </h2>
+
+          {/* Horizontal Scroll Container */}
+          <div className="relative">
+            {/* Scroll Arrows */}
+            <button
+              onClick={() => scrollCities("left")}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors hidden md:flex cursor-pointer"
+            >
+              <svg
+                className="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              onClick={() => scrollCities("right")}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors hidden md:flex cursor-pointer"
+            >
+              <svg
+                className="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+
+            <div
+              ref={cityScrollRef}
+              className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide"
+            >
+              {[
+                { name: "Delhi", image: "delhi.jpg", jobs: "15K+" },
+                { name: "Mumbai", image: "Mumbai.jpg", jobs: "12K+" },
+                { name: "Bangalore", image: "Bangalore.jpg", jobs: "14K+" },
+                { name: "Hyderabad", image: "Hydrabad.jpg", jobs: "10K+" },
+                { name: "Chennai", image: "Chennai.jpg", jobs: "8K+" },
+                { name: "Pune", image: "Pune.jpg", jobs: "7K+" },
+                { name: "Kolkata", image: "Kolkata.jpg", jobs: "6K+" },
+                { name: "Ahmedabad", image: "Ahmedabad.jpg", jobs: "5K+" },
+                { name: "Jaipur", image: "Jaipur.jpg", jobs: "4K+" },
+                { name: "Lucknow", image: "Lucknow.jpg", jobs: "3K+" },
+                { name: "Gurugram", image: "gurugram.jpg", jobs: "9K+" },
+                { name: "Noida", image: "noida.jpg", jobs: "8K+" },
+                { name: "Indore", image: "Indore.jpg", jobs: "2K+" },
+              ].map((city, index) => (
+                <a
+                  key={index}
+                  href={`/jobs?city=${city.name}`}
+                  className="flex-shrink-0 group cursor-pointer"
+                >
+                  <div className="w-44 bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all duration-300">
+                    <div className="h-32 overflow-hidden">
+                      <img
+                        src={`/images/featured-cities/${city.image}`}
+                        alt={city.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="p-4 text-center">
+                      <h3 className="font-semibold text-gray-900">
+                        {city.name}
+                      </h3>
+                      <p className="text-sm text-red-500">{city.jobs} Jobs</p>
+                    </div>
+                  </div>
+                </a>
+              ))}
+
+              {/* View All Cities Card */}
+              <a
+                href="/cities"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl border border-gray-200 flex flex-col items-center justify-center hover:shadow-lg hover:border-gray-300 transition-all duration-300 cursor-pointer"
+              >
+                <span className="text-red-500 font-medium">
+                  View all cities
+                </span>
+                <svg
+                  className="w-5 h-5 text-red-500 mt-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div className="text-center mt-10">
+            <a
+              href="/cities"
+              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-red-500 text-red-500 hover:bg-red-50 rounded-full font-medium transition-colors"
+            >
+              View all cities
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-50">
+      <section id="features" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
