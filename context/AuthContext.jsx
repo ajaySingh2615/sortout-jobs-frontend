@@ -66,9 +66,10 @@ export function AuthProvider({ children }) {
   // Login with OTP
   const loginWithOtp = async (phone, otp) => {
     const response = await authService.verifyOtp(phone, otp);
-    const { accessToken, refreshToken, email, role } = response.data;
+    const { accessToken, refreshToken, email, role, userId, isNewUser } =
+      response.data;
 
-    const userData = { email, phone, role };
+    const userData = { id: userId, email, phone, role, isNewUser };
 
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
