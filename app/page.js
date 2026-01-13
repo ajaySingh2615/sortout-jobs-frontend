@@ -225,8 +225,48 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Job Categories Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">
+            Explore Jobs by Category
+          </h2>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            {[
+              { name: "IT & Software", jobs: 500, icon: "💻" },
+              { name: "Marketing", jobs: 320, icon: "📈" },
+              { name: "Sales", jobs: 280, icon: "💼" },
+              { name: "Finance", jobs: 150, icon: "💰" },
+              { name: "HR", jobs: 120, icon: "👔" },
+              { name: "Operations", jobs: 200, icon: "🏢" },
+              { name: "Customer Support", jobs: 180, icon: "📞" },
+              { name: "Content Writing", jobs: 160, icon: "✍️" },
+              { name: "Data Analytics", jobs: 140, icon: "📊" },
+              { name: "Design", jobs: 100, icon: "🎨" },
+              { name: "Engineering", jobs: 250, icon: "⚙️" },
+              { name: "Legal", jobs: 80, icon: "⚖️" },
+            ].map((category, index) => (
+              <a
+                key={index}
+                href={`/jobs?category=${category.name}`}
+                className="group flex items-center gap-2 px-5 py-3 bg-gray-100 hover:bg-red-500 rounded-full transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-lg"
+              >
+                <span className="text-lg">{category.icon}</span>
+                <span className="font-medium text-gray-700 group-hover:text-white transition-colors">
+                  {category.name}
+                </span>
+                <span className="text-sm text-gray-500 group-hover:text-red-100 transition-colors">
+                  ({category.jobs}+)
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section id="features" className="py-20 bg-white">
+      <section id="features" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
