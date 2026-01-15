@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 const categories = [
   {
     name: "IT & Software",
@@ -57,20 +61,54 @@ const categories = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.3, ease: "easeOut" },
+  },
+};
+
 export default function JobCategoriesSection() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-white overflow-hidden">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">
+        <motion.h2
+          className="text-3xl font-bold text-gray-900 text-center mb-10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
           Explore Jobs by Category
-        </h2>
+        </motion.h2>
 
-        <div className="flex flex-wrap justify-center gap-4">
+        <motion.div
+          className="flex flex-wrap justify-center gap-4"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+        >
           {categories.map((category, index) => (
-            <a
+            <motion.a
               key={index}
               href={`/jobs?category=${category.name}`}
-              className="group flex items-center gap-3 px-6 py-4 bg-gray-100 hover:bg-red-500 rounded-full transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-lg"
+              variants={itemVariants}
+              whileHover={{ scale: 1.05, y: -3 }}
+              whileTap={{ scale: 0.98 }}
+              className="group flex items-center gap-3 px-6 py-4 bg-gray-100 hover:bg-red-500 rounded-full transition-colors duration-300 cursor-pointer hover:shadow-lg"
             >
               <svg
                 className="w-6 h-6 text-red-500 group-hover:text-white transition-colors"
@@ -91,9 +129,9 @@ export default function JobCategoriesSection() {
               <span className="text-sm text-gray-500 group-hover:text-red-100 transition-colors">
                 ({category.jobs}+)
               </span>
-            </a>
+            </motion.a>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

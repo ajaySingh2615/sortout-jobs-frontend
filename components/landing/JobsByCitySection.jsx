@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { motion } from "framer-motion";
 
 const cities = [
   { name: "Delhi", image: "delhi.jpg", jobs: "15K+" },
@@ -32,17 +33,25 @@ export default function JobsByCitySection() {
   };
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-gray-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">
+        <motion.h2
+          className="text-3xl font-bold text-gray-900 text-center mb-10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
           Explore jobs in 400+ cities
-        </h2>
+        </motion.h2>
 
         {/* Horizontal Scroll Container */}
         <div className="relative">
           {/* Scroll Arrows */}
-          <button
+          <motion.button
             onClick={() => scroll("left")}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors hidden md:flex cursor-pointer"
           >
             <svg
@@ -58,9 +67,11 @@ export default function JobsByCitySection() {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             onClick={() => scroll("right")}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors hidden md:flex cursor-pointer"
           >
             <svg
@@ -76,17 +87,26 @@ export default function JobsByCitySection() {
                 d="M9 5l7 7-7 7"
               />
             </svg>
-          </button>
+          </motion.button>
 
-          <div
+          <motion.div
             ref={scrollRef}
             className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide"
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
           >
             {cities.map((city, index) => (
-              <a
+              <motion.a
                 key={index}
                 href={`/jobs?city=${city.name}`}
                 className="flex-shrink-0 group cursor-pointer"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.03 }}
+                whileHover={{ y: -5 }}
               >
                 <div className="w-44 bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all duration-300">
                   <div className="h-32 overflow-hidden">
@@ -101,13 +121,14 @@ export default function JobsByCitySection() {
                     <p className="text-sm text-red-500">{city.jobs} Jobs</p>
                   </div>
                 </div>
-              </a>
+              </motion.a>
             ))}
 
             {/* View All Cities Card */}
-            <a
+            <motion.a
               href="/cities"
               className="flex-shrink-0 w-44 bg-gray-50 rounded-xl border border-gray-200 flex flex-col items-center justify-center hover:shadow-lg hover:border-gray-300 transition-all duration-300 cursor-pointer"
+              whileHover={{ y: -5 }}
             >
               <span className="text-red-500 font-medium">View all cities</span>
               <svg
@@ -123,18 +144,26 @@ export default function JobsByCitySection() {
                   d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                 />
               </svg>
-            </a>
-          </div>
+            </motion.a>
+          </motion.div>
         </div>
 
-        <div className="text-center mt-10">
-          <a
+        <motion.div
+          className="text-center mt-10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <motion.a
             href="/cities"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
             className="inline-flex items-center gap-2 px-6 py-3 border-2 border-red-500 text-red-500 hover:bg-red-50 rounded-full font-medium transition-colors"
           >
             View all cities
-          </a>
-        </div>
+          </motion.a>
+        </motion.div>
       </div>
     </section>
   );
