@@ -62,12 +62,24 @@ export default function ProfileHeaderCard({ profile, onEditPhoto, onUpdate }) {
   };
 
   const handleSendEmailOtp = async (newEmail) => {
-    await profileService.initiateEmailChange(profile.userId, newEmail);
+    const response = await profileService.initiateEmailChange(
+      profile.userId,
+      newEmail
+    );
     toast.success("OTP sent to " + newEmail);
+    return response; // Return response so modal can get expiry time
   };
 
   const handleVerifyEmailOtp = async (otp) => {
-    await profileService.verifyEmailChange(profile.userId, otp);
+    const response = await profileService.verifyEmailChange(
+      profile.userId,
+      otp
+    );
+    const { accessToken, newEmail } = response.data.data;
+
+    // Update stored token with new one
+    localStorage.setItem("accessToken", accessToken);
+
     toast.success("Email updated successfully");
     onUpdate();
   };
