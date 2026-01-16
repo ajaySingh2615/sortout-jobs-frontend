@@ -27,10 +27,19 @@ const profileService = {
 
   // Update profile summary
   updateSummary: (userId, summary) =>
-    api.put(`/profile/${userId}/summary`, summary),
+    api.put(`/profile/${userId}/summary`, summary, {
+      headers: { "Content-Type": "text/plain" },
+    }),
 
-  // ==================== EMPLOYMENTS ====================
+  // Basic Profile & Email
+  updateBasicProfile: (userId, data) =>
+    api.put(`/profile/${userId}/basic`, data),
+  initiateEmailChange: (userId, newEmail) =>
+    api.post(`/profile/${userId}/email/initiate`, { newEmail }),
+  verifyEmailChange: (userId, otp) =>
+    api.post(`/profile/${userId}/email/verify`, { otp }),
 
+  // Employment CRUD
   // Get all employments
   getEmployments: (userId) => api.get(`/profile/${userId}/employments`),
 

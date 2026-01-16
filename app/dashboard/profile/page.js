@@ -119,7 +119,11 @@ function ProfileContent() {
       <DashboardNavbar />
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Profile Header */}
-        <ProfileHeaderCard profile={profile} onEditPhoto={handleEditPhoto} />
+        <ProfileHeaderCard
+          profile={profile}
+          onEditPhoto={handleEditPhoto}
+          onUpdate={handleUpdate}
+        />
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
@@ -135,7 +139,7 @@ function ProfileContent() {
             {/* Headline */}
             <HeadlineSection
               userId={user?.id}
-              headline={profile?.headline}
+              headline={profile?.resumeHeadline}
               onUpdate={handleUpdate}
             />
 
@@ -170,7 +174,7 @@ function ProfileContent() {
             {/* Summary */}
             <SummarySection
               userId={user?.id}
-              summary={profile?.summary}
+              summary={profile?.profileSummary}
               onUpdate={handleUpdate}
             />
 
