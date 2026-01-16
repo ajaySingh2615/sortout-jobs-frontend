@@ -207,6 +207,13 @@ export default function ProfileHeaderCard({ profile, onEditPhoto, onUpdate }) {
               <span className="text-sm font-medium">
                 {profile?.email || "Not set"}
               </span>
+              {profile?.emailVerified &&
+                !profile?.email?.endsWith("@phone.local") && (
+                  <CheckCircle2
+                    className="w-3 h-3 text-green-500 ml-1"
+                    title="Email verified"
+                  />
+                )}
               <button
                 onClick={() => setShowEmailModal(true)}
                 className="opacity-0 group-hover/email:opacity-100 ml-2 text-xs text-red-600 hover:underline transition-opacity"
