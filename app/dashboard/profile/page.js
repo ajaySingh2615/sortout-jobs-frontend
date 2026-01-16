@@ -1,11 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import profileService from "@/services/profile.service";
 import DashboardNavbar from "@/components/layout/DashboardNavbar";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { toast } from "sonner";
+
+import {
+  ProfileHeaderCard,
+  QuickLinksCard,
+  ResumeSection,
+  HeadlineSection,
+  SummarySection,
+  EmploymentSection,
+  EducationSection,
+  ProjectSection,
+  ITSkillsSection,
+  PersonalDetailsSection,
+} from "@/components/profile";
 
 function ProfileContent() {
   const { user } = useAuth();
@@ -13,37 +26,68 @@ function ProfileContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user?.id) return;
+  const fetchProfile = useCallback(async () => {
+    if (!user?.id) return;
 
-      try {
-        setLoading(true);
-        const response = await profileService.getProfile(user.id);
-        setProfile(response.data.data);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        setError("Failed to load profile");
-        toast.error("Failed to load profile");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
+    try {
+      setLoading(true);
+      const response = await profileService.getProfile(user.id);
+      setProfile(response.data.data);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+      setError("Failed to load profile");
+      toast.error("Failed to load profile");
+    } finally {
+      setLoading(false);
+    }
   }, [user?.id]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  const handleUpdate = () => {
+    fetchProfile();
+  };
+
+  const handleEditPhoto = () => {
+    // TODO: Implement photo upload modal
+    toast.info("Photo upload coming soon!");
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <DashboardNavbar />
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto px-4 py-8">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 w-48 bg-gray-200 rounded" />
-            <div className="bg-white rounded-2xl p-6 space-y-4">
-              <div className="h-6 w-32 bg-gray-200 rounded" />
-              <div className="h-12 bg-gray-200 rounded" />
-              <div className="h-12 bg-gray-200 rounded" />
+            {/* Header skeleton */}
+            <div className="bg-white rounded-2xl overflow-hidden">
+              <div className="h-24 bg-gray-200" />
+              <div className="p-6">
+                <div className="flex items-end gap-4 -mt-12">
+                  <div className="w-24 h-24 bg-gray-300 rounded-full" />
+                  <div className="flex-1 space-y-2 mb-2">
+                    <div className="h-6 w-48 bg-gray-200 rounded" />
+                    <div className="h-4 w-32 bg-gray-200 rounded" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-4 mt-6">
+                  <div className="h-16 bg-gray-100 rounded-lg" />
+                  <div className="h-16 bg-gray-100 rounded-lg" />
+                  <div className="h-16 bg-gray-100 rounded-lg" />
+                  <div className="h-16 bg-gray-100 rounded-lg" />
+                </div>
+              </div>
+            </div>
+            {/* Sections skeleton */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-6">
+                <div className="h-48 bg-gray-200 rounded-2xl" />
+                <div className="h-48 bg-gray-200 rounded-2xl" />
+              </div>
+              <div className="h-64 bg-gray-200 rounded-2xl" />
             </div>
           </div>
         </div>
@@ -55,9 +99,15 @@ function ProfileContent() {
     return (
       <div className="min-h-screen bg-gray-50">
         <DashboardNavbar />
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto px-4 py-8">
           <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
             <p className="text-red-600">{error}</p>
+            <button
+              onClick={fetchProfile}
+              className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Retry
+            </button>
           </div>
         </div>
       </div>
@@ -67,171 +117,82 @@ function ProfileContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       <DashboardNavbar />
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-        </div>
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        {/* Profile Header */}
+        <ProfileHeaderCard profile={profile} onEditPhoto={handleEditPhoto} />
 
-        {/* Profile Card */}
-        <div className="space-y-6">
-          {/* Basic Info */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold text-red-500">
-                  {(profile?.fullName || profile?.name || "U")
-                    .charAt(0)
-                    .toUpperCase()}
-                </span>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {profile?.fullName || profile?.name || "User"}
-                </h2>
-                <p className="text-gray-500">{profile?.phone}</p>
-              </div>
-            </div>
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          {/* Left Column - Main Sections */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Resume */}
+            <ResumeSection
+              userId={user?.id}
+              resume={profile?.resume}
+              onUpdate={handleUpdate}
+            />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InfoItem label="Phone" value={profile?.phone} />
-              <InfoItem label="Email" value={profile?.email || "Not set"} />
-              <InfoItem label="Gender" value={profile?.gender || "Not set"} />
-              <InfoItem
-                label="Education"
-                value={formatEducation(profile?.educationLevel)}
-              />
-            </div>
+            {/* Headline */}
+            <HeadlineSection
+              userId={user?.id}
+              headline={profile?.headline}
+              onUpdate={handleUpdate}
+            />
+
+            {/* Employment */}
+            <EmploymentSection
+              userId={user?.id}
+              employments={profile?.employments}
+              onUpdate={handleUpdate}
+            />
+
+            {/* Education */}
+            <EducationSection
+              userId={user?.id}
+              educations={profile?.educations}
+              onUpdate={handleUpdate}
+            />
+
+            {/* Projects */}
+            <ProjectSection
+              userId={user?.id}
+              projects={profile?.projects}
+              onUpdate={handleUpdate}
+            />
+
+            {/* IT Skills */}
+            <ITSkillsSection
+              userId={user?.id}
+              itSkills={profile?.itSkills}
+              onUpdate={handleUpdate}
+            />
+
+            {/* Summary */}
+            <SummarySection
+              userId={user?.id}
+              summary={profile?.summary}
+              onUpdate={handleUpdate}
+            />
+
+            {/* Personal Details */}
+            <PersonalDetailsSection
+              userId={user?.id}
+              personalDetails={profile?.personalDetails}
+              onUpdate={handleUpdate}
+            />
           </div>
 
-          {/* Experience */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Experience
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InfoItem
-                label="Has Experience"
-                value={profile?.hasExperience ? "Yes" : "Fresher"}
-              />
-              {profile?.hasExperience && (
-                <>
-                  <InfoItem
-                    label="Experience Level"
-                    value={formatExperience(profile?.experienceLevel)}
-                  />
-                  <InfoItem
-                    label="Current Salary"
-                    value={
-                      profile?.currentSalary
-                        ? `₹${profile.currentSalary.toLocaleString()}/month`
-                        : "Not disclosed"
-                    }
-                  />
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Location */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Location Preferences
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InfoItem label="City" value={profile?.cityName || "Not set"} />
-              <InfoItem
-                label="Locality"
-                value={profile?.localityName || "Not set"}
-              />
-              <InfoItem
-                label="WhatsApp Updates"
-                value={profile?.whatsappUpdates ? "Enabled" : "Disabled"}
-              />
-            </div>
-          </div>
-
-          {/* Job Preferences */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Job Preferences
-            </h3>
-            <div className="space-y-4">
-              <InfoItem
-                label="Preferred Role"
-                value={profile?.roleName || "Not set"}
-              />
-
-              <div>
-                <p className="text-sm text-gray-500 mb-2">Skills</p>
-                {profile?.skills && profile.skills.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {profile.skills.map((skill) => (
-                      <span
-                        key={skill.id}
-                        className="px-3 py-1 bg-red-50 text-red-600 rounded-full text-sm font-medium"
-                      >
-                        {skill.name}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-700">No skills added</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Profile Status */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  profile?.profileCompleted ? "bg-green-500" : "bg-yellow-500"
-                }`}
-              />
-              <span className="text-gray-700">
-                Profile {profile?.profileCompleted ? "Complete" : "Incomplete"}
-              </span>
+          {/* Right Column - Sidebar */}
+          <div className="space-y-6">
+            {/* Quick Links */}
+            <div className="sticky top-24">
+              <QuickLinksCard />
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-}
-
-function InfoItem({ label, value }) {
-  return (
-    <div>
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-gray-900 font-medium">{value}</p>
-    </div>
-  );
-}
-
-function formatEducation(level) {
-  if (!level) return "Not set";
-  const map = {
-    BELOW_10TH: "Below 10th",
-    _10TH_PASS: "10th Pass",
-    _12TH_PASS: "12th Pass",
-    GRADUATE: "Graduate",
-    POST_GRADUATE: "Post Graduate",
-  };
-  return map[level] || level;
-}
-
-function formatExperience(level) {
-  if (!level) return "Not set";
-  const map = {
-    FRESHER: "Fresher",
-    _0_1_YEARS: "0-1 Years",
-    _1_3_YEARS: "1-3 Years",
-    _3_5_YEARS: "3-5 Years",
-    _5_PLUS_YEARS: "5+ Years",
-  };
-  return map[level] || level;
 }
 
 export default function ProfilePage() {
