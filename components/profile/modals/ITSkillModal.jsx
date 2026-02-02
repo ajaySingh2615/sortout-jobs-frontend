@@ -5,9 +5,8 @@ import { X } from "lucide-react";
 
 export default function ITSkillModal({ isOpen, onClose, onSave, initialData }) {
   const [formData, setFormData] = useState({
-    skillName: "",
-    version: "",
-    lastUsed: "",
+    name: "",
+    proficiency: "BEGINNER",
     experienceMonths: "",
   });
   const [saving, setSaving] = useState(false);
@@ -15,16 +14,14 @@ export default function ITSkillModal({ isOpen, onClose, onSave, initialData }) {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        skillName: initialData.skillName || initialData.name || "",
-        version: initialData.version || "",
-        lastUsed: initialData.lastUsed || "",
-        experienceMonths: initialData.experienceMonths || "",
+        name: initialData.name || "",
+        proficiency: initialData.proficiency || "BEGINNER",
+        experienceMonths: initialData.experienceMonths != null ? String(initialData.experienceMonths) : "",
       });
     } else {
       setFormData({
-        skillName: "",
-        version: "",
-        lastUsed: "",
+        name: "",
+        proficiency: "BEGINNER",
         experienceMonths: "",
       });
     }
@@ -37,28 +34,27 @@ export default function ITSkillModal({ isOpen, onClose, onSave, initialData }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.skillName) {
+    if (!formData.name?.trim()) {
       alert("Please enter a skill name");
       return;
     }
 
     setSaving(true);
     try {
-      await onSave({
-        ...formData,
+      const payload = {
+        name: formData.name.trim(),
+        proficiency: formData.proficiency || "BEGINNER",
         experienceMonths: formData.experienceMonths
-          ? parseInt(formData.experienceMonths)
-          : 0,
-      });
+          ? parseInt(formData.experienceMonths, 10)
+          : null,
+      };
+      await onSave(payload);
     } finally {
       setSaving(false);
     }
   };
 
   if (!isOpen) return null;
-
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 20 }, (_, i) => currentYear - i);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -89,29 +85,31 @@ export default function ITSkillModal({ isOpen, onClose, onSave, initialData }) {
             </label>
             <input
               type="text"
-              value={formData.skillName}
-              onChange={(e) => handleChange("skillName", e.target.value)}
+              value={formData.name}
+              onChange={(e) => handleChange("name", e.target.value)}
               placeholder="e.g., Java, React, Python"
               className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
               required
             />
           </div>
 
-          {/* Version */}
+          {/* Proficiency */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Version (Optional)
+              Proficiency
             </label>
-            <input
-              type="text"
-              value={formData.version}
-              onChange={(e) => handleChange("version", e.target.value)}
-              placeholder="e.g., 17, 18.2"
+            <select
+              value={formData.proficiency}
+              onChange={(e) => handleChange("proficiency", e.target.value)}
               className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
-            />
+            >
+              <option value="BEGINNER">Beginner</option>
+              <option value="INTERMEDIATE">Intermediate</option>
+              <option value="EXPERT">Expert</option>
+            </select>
           </div>
 
-          {/* Experience */}
+          {/* Experience (months) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Experience (in months)
@@ -127,30 +125,11 @@ export default function ITSkillModal({ isOpen, onClose, onSave, initialData }) {
             />
             <p className="text-xs text-gray-500 mt-1">
               {formData.experienceMonths
-                ? `${Math.floor(formData.experienceMonths / 12)} years ${
-                    formData.experienceMonths % 12
+                ? `${Math.floor(Number(formData.experienceMonths) / 12)} years ${
+                    Number(formData.experienceMonths) % 12
                   } months`
                 : "Enter experience in months"}
             </p>
-          </div>
-
-          {/* Last Used */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Last Used
-            </label>
-            <select
-              value={formData.lastUsed}
-              onChange={(e) => handleChange("lastUsed", e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
-            >
-              <option value="">Select Year</option>
-              {years.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
           </div>
 
           {/* Actions */}

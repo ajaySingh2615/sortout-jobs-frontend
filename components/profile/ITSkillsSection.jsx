@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Code2, Pencil, Trash2, Clock } from "lucide-react";
 import ProfileSection from "./ProfileSection";
 import ITSkillModal from "./modals/ITSkillModal";
@@ -12,13 +12,19 @@ export default function ITSkillsSection({
   itSkills: initialSkills,
   onUpdate,
 }) {
-  const [itSkills, setItSkills] = useState(initialSkills || []);
+  const itSkills = initialSkills || [];
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
-  useEffect(() => {
-    setItSkills(initialSkills || []);
-  }, [initialSkills]);
+  const formatProficiency = (p) => {
+    if (!p) return "";
+    const map = {
+      BEGINNER: "Beginner",
+      INTERMEDIATE: "Intermediate",
+      EXPERT: "Expert",
+    };
+    return map[p] || p;
+  };
 
   const handleAdd = () => {
     setEditingItem(null);
@@ -86,11 +92,11 @@ export default function ITSkillsSection({
               key={skill.id}
               className="group relative flex items-center gap-2 px-4 py-2 bg-cyan-50 rounded-xl border border-cyan-200 hover:border-cyan-300 transition-colors"
             >
-              <span className="font-medium text-cyan-800">
-                {skill.skillName || skill.name}
-              </span>
-              {skill.version && (
-                <span className="text-xs text-cyan-600">v{skill.version}</span>
+              <span className="font-medium text-cyan-800">{skill.name}</span>
+              {skill.proficiency && (
+                <span className="text-xs text-cyan-600">
+                  {formatProficiency(skill.proficiency)}
+                </span>
               )}
               <span className="flex items-center gap-1 text-xs text-cyan-600">
                 <Clock className="w-3 h-3" />
