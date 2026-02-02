@@ -7,7 +7,6 @@ export default function ProjectModal({ isOpen, onClose, onSave, initialData }) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    status: "",
     startDate: "",
     endDate: "",
     isOngoing: false,
@@ -20,17 +19,15 @@ export default function ProjectModal({ isOpen, onClose, onSave, initialData }) {
       setFormData({
         title: initialData.title || "",
         description: initialData.description || "",
-        status: initialData.status || "",
         startDate: initialData.startDate || "",
         endDate: initialData.endDate || "",
-        isOngoing: initialData.isOngoing || false,
+        isOngoing: initialData.isOngoing ?? false,
         projectUrl: initialData.projectUrl || "",
       });
     } else {
       setFormData({
         title: "",
         description: "",
-        status: "",
         startDate: "",
         endDate: "",
         isOngoing: false,
@@ -41,6 +38,9 @@ export default function ProjectModal({ isOpen, onClose, onSave, initialData }) {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "isOngoing" && value === true) {
+      setFormData((prev) => ({ ...prev, endDate: "" }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -113,7 +113,7 @@ export default function ProjectModal({ isOpen, onClose, onSave, initialData }) {
             />
           </div>
 
-          {/* Status */}
+          {/* Status - backed by isOngoing (backend has no status field) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Status
@@ -124,8 +124,8 @@ export default function ProjectModal({ isOpen, onClose, onSave, initialData }) {
                   type="radio"
                   name="status"
                   value="IN_PROGRESS"
-                  checked={formData.status === "IN_PROGRESS"}
-                  onChange={(e) => handleChange("status", e.target.value)}
+                  checked={formData.isOngoing === true}
+                  onChange={() => handleChange("isOngoing", true)}
                   className="w-4 h-4 text-red-600 focus:ring-red-500"
                 />
                 <span className="text-sm text-gray-700">In Progress</span>
@@ -135,8 +135,8 @@ export default function ProjectModal({ isOpen, onClose, onSave, initialData }) {
                   type="radio"
                   name="status"
                   value="FINISHED"
-                  checked={formData.status === "FINISHED"}
-                  onChange={(e) => handleChange("status", e.target.value)}
+                  checked={formData.isOngoing === false}
+                  onChange={() => handleChange("isOngoing", false)}
                   className="w-4 h-4 text-red-600 focus:ring-red-500"
                 />
                 <span className="text-sm text-gray-700">Finished</span>

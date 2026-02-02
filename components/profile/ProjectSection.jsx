@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   FolderKanban,
   Pencil,
@@ -18,13 +18,9 @@ export default function ProjectSection({
   projects: initialProjects,
   onUpdate,
 }) {
-  const [projects, setProjects] = useState(initialProjects || []);
+  const projects = initialProjects || [];
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-
-  useEffect(() => {
-    setProjects(initialProjects || []);
-  }, [initialProjects]);
 
   const handleAdd = () => {
     setEditingItem(null);
@@ -75,15 +71,10 @@ export default function ProjectSection({
     });
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "FINISHED":
-        return "bg-green-50 text-green-700";
-      case "IN_PROGRESS":
-        return "bg-blue-50 text-blue-700";
-      default:
-        return "bg-gray-50 text-gray-700";
-    }
+  const getStatusColor = (isOngoing) => {
+    return isOngoing
+      ? "bg-blue-50 text-blue-700"
+      : "bg-green-50 text-green-700";
   };
 
   return (
@@ -109,17 +100,13 @@ export default function ProjectSection({
                     <h4 className="font-semibold text-gray-900">
                       {project.title}
                     </h4>
-                    {project.status && (
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                          project.status
-                        )}`}
-                      >
-                        {project.status === "IN_PROGRESS"
-                          ? "In Progress"
-                          : "Finished"}
-                      </span>
-                    )}
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                        project.isOngoing
+                      )}`}
+                    >
+                      {project.isOngoing ? "In Progress" : "Finished"}
+                    </span>
                   </div>
                   <p className="text-gray-600 mt-1">{project.description}</p>
                   <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
