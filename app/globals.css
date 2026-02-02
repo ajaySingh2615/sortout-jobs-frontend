@@ -150,3 +150,62 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Toast (Sonner) - match site red theme
+   Sonner injects its CSS at runtime (after this file), so we override at the toaster
+   with !important so our variables always win, then force toast appearance as backup. */
+[data-sonner-toaster] {
+  --success-bg: #dc2626 !important;
+  --success-border: #b91c1c !important;
+  --success-text: #ffffff !important;
+  --info-bg: #dc2626 !important;
+  --info-border: #b91c1c !important;
+  --info-text: #ffffff !important;
+  --warning-bg: #ea580c !important;
+  --warning-border: #c2410c !important;
+  --warning-text: #ffffff !important;
+  --error-bg: #991b1b !important;
+  --error-border: #7f1d1d !important;
+  --error-text: #fecaca !important;
+}
+/* Direct toast overrides (backup if vars are not inherited) */
+[data-rich-colors="true"][data-sonner-toast][data-type="success"],
+[data-rich-colors="true"][data-sonner-toast][data-type="success"]
+  [data-close-button] {
+  background: #dc2626 !important;
+  border-color: #b91c1c !important;
+  color: #ffffff !important;
+}
+[data-rich-colors="true"][data-sonner-toast][data-type="success"] [data-icon] {
+  color: #ffffff !important;
+}
+[data-rich-colors="true"][data-sonner-toast][data-type="info"],
+[data-rich-colors="true"][data-sonner-toast][data-type="info"]
+  [data-close-button] {
+  background: #dc2626 !important;
+  border-color: #b91c1c !important;
+  color: #ffffff !important;
+}
+[data-rich-colors="true"][data-sonner-toast][data-type="info"] [data-icon] {
+  color: #ffffff !important;
+}
+[data-rich-colors="true"][data-sonner-toast][data-type="warning"],
+[data-rich-colors="true"][data-sonner-toast][data-type="warning"]
+  [data-close-button] {
+  background: #ea580c !important;
+  border-color: #c2410c !important;
+  color: #ffffff !important;
+}
+[data-rich-colors="true"][data-sonner-toast][data-type="warning"] [data-icon] {
+  color: #ffffff !important;
+}
+[data-rich-colors="true"][data-sonner-toast][data-type="error"],
+[data-rich-colors="true"][data-sonner-toast][data-type="error"]
+  [data-close-button] {
+  background: #991b1b !important;
+  border-color: #7f1d1d !important;
+  color: #fecaca !important;
+}
+[data-rich-colors="true"][data-sonner-toast][data-type="error"] [data-icon] {
+  color: #fecaca !important;
+}

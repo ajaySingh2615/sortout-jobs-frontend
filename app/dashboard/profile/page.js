@@ -26,29 +26,34 @@ function ProfileContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchProfile = useCallback(async () => {
-    if (!user?.id) return;
+  const fetchProfile = useCallback(
+    async (options = {}) => {
+      if (!user?.id) return;
 
-    try {
-      setLoading(true);
-      const response = await profileService.getProfile(user.id);
-      setProfile(response.data.data);
-      setError(null);
-    } catch (err) {
-      console.error("Error fetching profile:", err);
-      setError("Failed to load profile");
-      toast.error("Failed to load profile");
-    } finally {
-      setLoading(false);
-    }
-  }, [user?.id]);
+      const { silent = false } = options;
+      if (!silent) setLoading(true);
+
+      try {
+        const response = await profileService.getProfile(user.id);
+        setProfile(response.data.data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+        setError("Failed to load profile");
+        if (!silent) toast.error("Failed to load profile");
+      } finally {
+        if (!silent) setLoading(false);
+      }
+    },
+    [user?.id]
+  );
 
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
   const handleUpdate = () => {
-    fetchProfile();
+    fetchProfile({ silent: true });
   };
 
   const handleEditPhoto = () => {
