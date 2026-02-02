@@ -88,17 +88,17 @@ export default function ProfileHeaderCard({ profile, onEditPhoto, onUpdate }) {
     <>
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden group">
         {/* Cover Background */}
-        <div className="h-24 bg-gradient-to-r from-red-500 to-red-600 relative">
+        <div className="h-24 bg-gradient-to-r from-red-500 to-red-600 relative z-0">
           <button
             onClick={() => setShowBasicModal(true)}
-            className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white transition-colors"
+            className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white transition-colors cursor-pointer z-10"
             title="Edit Header Details"
           >
             <Edit2 className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="px-6 pb-6">
+        <div className="px-6 pb-6 relative z-10 bg-white">
           {/* Profile Photo & Basic Info */}
           <div className="flex flex-col md:flex-row md:items-end gap-4 -mt-12">
             {/* Profile Photo */}
@@ -118,7 +118,7 @@ export default function ProfileHeaderCard({ profile, onEditPhoto, onUpdate }) {
               </div>
               <button
                 onClick={onEditPhoto}
-                className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
+                className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200 cursor-pointer"
               >
                 <Camera className="w-4 h-4 text-gray-600" />
               </button>
@@ -216,7 +216,7 @@ export default function ProfileHeaderCard({ profile, onEditPhoto, onUpdate }) {
                 )}
               <button
                 onClick={() => setShowEmailModal(true)}
-                className="opacity-0 group-hover/email:opacity-100 ml-2 text-xs text-red-600 hover:underline transition-opacity"
+                className="opacity-0 group-hover/email:opacity-100 ml-2 text-xs text-red-600 hover:underline transition-opacity cursor-pointer"
               >
                 Change
               </button>

@@ -60,7 +60,7 @@ function ProfileContent() {
     return (
       <div className="min-h-screen bg-gray-50">
         <DashboardNavbar />
-        <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto px-4 pt-20 pb-8">
           <div className="animate-pulse space-y-6">
             {/* Header skeleton */}
             <div className="bg-white rounded-2xl overflow-hidden">
@@ -99,7 +99,7 @@ function ProfileContent() {
     return (
       <div className="min-h-screen bg-gray-50">
         <DashboardNavbar />
-        <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto px-4 pt-20 pb-8">
           <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
             <p className="text-red-600">{error}</p>
             <button
@@ -117,7 +117,7 @@ function ProfileContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       <DashboardNavbar />
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 pt-20 pb-8">
         {/* Profile Header */}
         <ProfileHeaderCard
           profile={profile}
