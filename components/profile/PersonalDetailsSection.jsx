@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   User,
   Pencil,
@@ -15,19 +15,48 @@ import ProfileSection from "./ProfileSection";
 import profileService from "@/services/profile.service";
 import { toast } from "sonner";
 
+const initialFormState = () => ({
+  dateOfBirth: "",
+  maritalStatus: "",
+  address: "",
+  pincode: "",
+  nationality: "",
+});
+
 export default function PersonalDetailsSection({
   userId,
   personalDetails,
   onUpdate,
 }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(personalDetails || {});
+  const [formData, setFormData] = useState(initialFormState());
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (personalDetails) {
+      setFormData({
+        dateOfBirth: personalDetails.dateOfBirth || "",
+        maritalStatus: personalDetails.maritalStatus || "",
+        address: personalDetails.address || "",
+        pincode: personalDetails.pincode || "",
+        nationality: personalDetails.nationality || "",
+      });
+    } else {
+      setFormData(initialFormState());
+    }
+  }, [personalDetails]);
 
   const handleSave = async () => {
     try {
       setSaving(true);
-      await profileService.updatePersonalDetails(userId, formData);
+      const payload = {
+        dateOfBirth: formData.dateOfBirth || null,
+        maritalStatus: formData.maritalStatus || null,
+        address: formData.address?.trim() || null,
+        pincode: formData.pincode?.trim() || null,
+        nationality: formData.nationality?.trim() || null,
+      };
+      await profileService.updatePersonalDetails(userId, payload);
       toast.success("Personal details updated successfully");
       setIsEditing(false);
       if (onUpdate) onUpdate();
@@ -40,7 +69,17 @@ export default function PersonalDetailsSection({
   };
 
   const handleCancel = () => {
-    setFormData(personalDetails || {});
+    if (personalDetails) {
+      setFormData({
+        dateOfBirth: personalDetails.dateOfBirth || "",
+        maritalStatus: personalDetails.maritalStatus || "",
+        address: personalDetails.address || "",
+        pincode: personalDetails.pincode || "",
+        nationality: personalDetails.nationality || "",
+      });
+    } else {
+      setFormData(initialFormState());
+    }
     setIsEditing(false);
   };
 
@@ -58,12 +97,25 @@ export default function PersonalDetailsSection({
     });
   };
 
+  const openEdit = () => {
+    if (personalDetails) {
+      setFormData({
+        dateOfBirth: personalDetails.dateOfBirth || "",
+        maritalStatus: personalDetails.maritalStatus || "",
+        address: personalDetails.address || "",
+        pincode: personalDetails.pincode || "",
+        nationality: personalDetails.nationality || "",
+      });
+    }
+    setIsEditing(true);
+  };
+
   return (
     <ProfileSection
       id="personal-details"
       title="Personal Details"
       icon={User}
-      onEdit={() => setIsEditing(true)}
+      onEdit={openEdit}
       isEmpty={!personalDetails && !isEditing}
       emptyMessage="Add your personal details"
     >
@@ -81,23 +133,6 @@ export default function PersonalDetailsSection({
                 onChange={(e) => handleChange("dateOfBirth", e.target.value)}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
-            </div>
-
-            {/* Gender */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gender
-              </label>
-              <select
-                value={formData.gender || ""}
-                onChange={(e) => handleChange("gender", e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              >
-                <option value="">Select Gender</option>
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
-                <option value="OTHER">Other</option>
-              </select>
             </div>
 
             {/* Marital Status */}
@@ -118,34 +153,16 @@ export default function PersonalDetailsSection({
               </select>
             </div>
 
-            {/* Category */}
+            {/* Nationality */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Category
-              </label>
-              <select
-                value={formData.category || ""}
-                onChange={(e) => handleChange("category", e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              >
-                <option value="">Select Category</option>
-                <option value="GENERAL">General</option>
-                <option value="OBC">OBC</option>
-                <option value="SC">SC</option>
-                <option value="ST">ST</option>
-              </select>
-            </div>
-
-            {/* Hometown */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Hometown
+                Nationality
               </label>
               <input
                 type="text"
-                value={formData.hometown || ""}
-                onChange={(e) => handleChange("hometown", e.target.value)}
-                placeholder="e.g., Mumbai"
+                value={formData.nationality || ""}
+                onChange={(e) => handleChange("nationality", e.target.value)}
+                placeholder="e.g., Indian"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
             </div>
@@ -166,42 +183,18 @@ export default function PersonalDetailsSection({
             </div>
           </div>
 
-          {/* Permanent Address */}
+          {/* Address */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Permanent Address
+              Address
             </label>
             <textarea
-              value={formData.permanentAddress || ""}
-              onChange={(e) => handleChange("permanentAddress", e.target.value)}
+              value={formData.address || ""}
+              onChange={(e) => handleChange("address", e.target.value)}
               placeholder="Enter your permanent address"
               rows={2}
               className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
             />
-          </div>
-
-          {/* Checkboxes */}
-          <div className="flex flex-wrap gap-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.differentlyAbled || false}
-                onChange={(e) =>
-                  handleChange("differentlyAbled", e.target.checked)
-                }
-                className="w-4 h-4 text-red-600 rounded focus:ring-red-500"
-              />
-              <span className="text-sm text-gray-700">Differently Abled</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.careerBreak || false}
-                onChange={(e) => handleChange("careerBreak", e.target.checked)}
-                className="w-4 h-4 text-red-600 rounded focus:ring-red-500"
-              />
-              <span className="text-sm text-gray-700">Have a Career Break</span>
-            </label>
           </div>
 
           {/* Action Buttons */}
@@ -230,30 +223,25 @@ export default function PersonalDetailsSection({
             <DetailItem
               icon={<Calendar className="w-4 h-4" />}
               label="Date of Birth"
-              value={formatDate(personalDetails.dateOfBirth)}
-            />
-            <DetailItem
-              icon={<User className="w-4 h-4" />}
-              label="Gender"
-              value={personalDetails.gender || "Not set"}
+              value={
+                personalDetails.dateOfBirth
+                  ? formatDate(personalDetails.dateOfBirth)
+                  : "Not set"
+              }
             />
             <DetailItem
               icon={<Heart className="w-4 h-4" />}
               label="Marital Status"
-              value={personalDetails.maritalStatus || "Not set"}
+              value={
+                personalDetails.maritalStatus
+                  ? personalDetails.maritalStatus.replace("_", " ")
+                  : "Not set"
+              }
             />
             <DetailItem
               icon={<Globe className="w-4 h-4" />}
-              label="Category"
-              value={personalDetails.category || "Not set"}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
-            <DetailItem
-              icon={<MapPin className="w-4 h-4" />}
-              label="Hometown"
-              value={personalDetails.hometown || "Not set"}
+              label="Nationality"
+              value={personalDetails.nationality || "Not set"}
             />
             <DetailItem
               icon={<MapPin className="w-4 h-4" />}
@@ -262,30 +250,15 @@ export default function PersonalDetailsSection({
             />
           </div>
 
-          {personalDetails.permanentAddress && (
+          {personalDetails.address && (
             <div className="pt-4 border-t border-gray-100">
-              <p className="text-sm text-gray-500 mb-1">Permanent Address</p>
-              <p className="text-gray-900">
-                {personalDetails.permanentAddress}
-              </p>
+              <p className="text-sm text-gray-500 mb-1">Address</p>
+              <p className="text-gray-900">{personalDetails.address}</p>
             </div>
           )}
 
-          <div className="flex flex-wrap gap-4 pt-4 border-t border-gray-100">
-            {personalDetails.differentlyAbled && (
-              <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
-                Differently Abled
-              </span>
-            )}
-            {personalDetails.careerBreak && (
-              <span className="px-3 py-1 bg-yellow-50 text-yellow-700 rounded-full text-sm">
-                Career Break
-              </span>
-            )}
-          </div>
-
           <button
-            onClick={() => setIsEditing(true)}
+            onClick={openEdit}
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <Pencil className="w-4 h-4" />
