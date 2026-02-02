@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GraduationCap, Pencil, Trash2, School, Calendar } from "lucide-react";
 import ProfileSection from "./ProfileSection";
 import EducationModal from "./modals/EducationModal";
@@ -12,13 +12,9 @@ export default function EducationSection({
   educations: initialEducations,
   onUpdate,
 }) {
-  const [educations, setEducations] = useState(initialEducations || []);
+  const educations = initialEducations || [];
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-
-  useEffect(() => {
-    setEducations(initialEducations || []);
-  }, [initialEducations]);
 
   const handleAdd = () => {
     setEditingItem(null);
@@ -60,17 +56,10 @@ export default function EducationSection({
     }
   };
 
-  const formatEducationLevel = (level) => {
-    const map = {
-      BELOW_10TH: "Below 10th",
-      CLASS_10TH: "10th",
-      CLASS_12TH: "12th",
-      DIPLOMA: "Diploma",
-      GRADUATION: "Graduation",
-      POST_GRADUATION: "Post Graduation",
-      PHD: "PhD",
-    };
-    return map[level] || level;
+  const formatGradeType = (type) => {
+    if (!type) return "";
+    const map = { PERCENTAGE: "Percentage", CGPA: "CGPA", GRADE: "Grade" };
+    return map[type] || type;
   };
 
   return (
@@ -97,20 +86,22 @@ export default function EducationSection({
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">
-                      {edu.course || formatEducationLevel(edu.educationLevel)}
+                      {edu.degree}
                     </h4>
                     {edu.specialization && (
                       <p className="text-gray-600">{edu.specialization}</p>
                     )}
-                    <p className="text-gray-600">{edu.university}</p>
+                    <p className="text-gray-600">{edu.institution}</p>
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {edu.passingYear}
-                      </span>
-                      {edu.marks && (
+                      {edu.passOutYear && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          {edu.passOutYear}
+                        </span>
+                      )}
+                      {edu.grade && (
                         <span className="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium">
-                          {edu.gradingSystem}: {edu.marks}
+                          {formatGradeType(edu.gradeType)}: {edu.grade}
                         </span>
                       )}
                     </div>

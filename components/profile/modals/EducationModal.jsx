@@ -10,39 +10,36 @@ export default function EducationModal({
   initialData,
 }) {
   const [formData, setFormData] = useState({
-    educationLevel: "",
-    course: "",
+    degree: "",
     specialization: "",
-    university: "",
-    courseType: "",
-    passingYear: "",
-    gradingSystem: "",
-    marks: "",
+    institution: "",
+    passOutYear: "",
+    gradeType: "",
+    grade: "",
   });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (initialData) {
       setFormData({
-        educationLevel: initialData.educationLevel || "",
-        course: initialData.course || "",
+        degree: initialData.degree || "",
         specialization: initialData.specialization || "",
-        university: initialData.university || "",
-        courseType: initialData.courseType || "",
-        passingYear: initialData.passingYear || "",
-        gradingSystem: initialData.gradingSystem || "",
-        marks: initialData.marks || "",
+        institution: initialData.institution || "",
+        passOutYear:
+          initialData.passOutYear != null
+            ? String(initialData.passOutYear)
+            : "",
+        gradeType: initialData.gradeType || "",
+        grade: initialData.grade || "",
       });
     } else {
       setFormData({
-        educationLevel: "",
-        course: "",
+        degree: "",
         specialization: "",
-        university: "",
-        courseType: "",
-        passingYear: "",
-        gradingSystem: "",
-        marks: "",
+        institution: "",
+        passOutYear: "",
+        gradeType: "",
+        grade: "",
       });
     }
   }, [initialData, isOpen]);
@@ -54,14 +51,24 @@ export default function EducationModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.educationLevel || !formData.university) {
-      alert("Please fill in all required fields");
+    if (!formData.degree || !formData.institution) {
+      alert("Please fill in Degree/Course and Institution");
       return;
     }
 
     setSaving(true);
     try {
-      await onSave(formData);
+      const payload = {
+        degree: formData.degree.trim(),
+        specialization: formData.specialization.trim() || null,
+        institution: formData.institution.trim(),
+        passOutYear: formData.passOutYear
+          ? parseInt(formData.passOutYear, 10)
+          : null,
+        gradeType: formData.gradeType || null,
+        grade: formData.grade.trim() || null,
+      };
+      await onSave(payload);
     } finally {
       setSaving(false);
     }
@@ -94,39 +101,18 @@ export default function EducationModal({
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Education Level */}
+          {/* Degree/Course */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Education Level <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.educationLevel}
-              onChange={(e) => handleChange("educationLevel", e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              required
-            >
-              <option value="">Select Level</option>
-              <option value="BELOW_10TH">Below 10th</option>
-              <option value="CLASS_10TH">10th</option>
-              <option value="CLASS_12TH">12th</option>
-              <option value="DIPLOMA">Diploma</option>
-              <option value="GRADUATION">Graduation</option>
-              <option value="POST_GRADUATION">Post Graduation</option>
-              <option value="PHD">PhD</option>
-            </select>
-          </div>
-
-          {/* Course */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Course/Degree
+              Degree/Course <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              value={formData.course}
-              onChange={(e) => handleChange("course", e.target.value)}
-              placeholder="e.g., B.Tech, MBA, B.Com"
+              value={formData.degree}
+              onChange={(e) => handleChange("degree", e.target.value)}
+              placeholder="e.g., B.Tech, MBA, 12th, B.Com"
               className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              required
             />
           </div>
 
@@ -144,66 +130,50 @@ export default function EducationModal({
             />
           </div>
 
-          {/* University/Institution */}
+          {/* Institution */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              University/Institution <span className="text-red-500">*</span>
+              School/University/Institution{" "}
+              <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              value={formData.university}
-              onChange={(e) => handleChange("university", e.target.value)}
-              placeholder="e.g., Delhi University"
+              value={formData.institution}
+              onChange={(e) => handleChange("institution", e.target.value)}
+              placeholder="e.g., Delhi University, IIT Delhi"
               className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
               required
             />
           </div>
 
-          {/* Course Type & Passing Year */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Course Type
-              </label>
-              <select
-                value={formData.courseType}
-                onChange={(e) => handleChange("courseType", e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              >
-                <option value="">Select Type</option>
-                <option value="FULL_TIME">Full Time</option>
-                <option value="PART_TIME">Part Time</option>
-                <option value="DISTANCE">Distance Learning</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Passing Year
-              </label>
-              <select
-                value={formData.passingYear}
-                onChange={(e) => handleChange("passingYear", e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              >
-                <option value="">Select Year</option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Passing Year */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Passing Year
+            </label>
+            <select
+              value={formData.passOutYear}
+              onChange={(e) => handleChange("passOutYear", e.target.value)}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            >
+              <option value="">Select Year</option>
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* Grading System & Marks */}
+          {/* Grade Type & Grade */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Grading System
               </label>
               <select
-                value={formData.gradingSystem}
-                onChange={(e) => handleChange("gradingSystem", e.target.value)}
+                value={formData.gradeType}
+                onChange={(e) => handleChange("gradeType", e.target.value)}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
               >
                 <option value="">Select System</option>
@@ -214,12 +184,12 @@ export default function EducationModal({
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Marks/CGPA
+                Marks/Grade
               </label>
               <input
                 type="text"
-                value={formData.marks}
-                onChange={(e) => handleChange("marks", e.target.value)}
+                value={formData.grade}
+                onChange={(e) => handleChange("grade", e.target.value)}
                 placeholder="e.g., 8.5 or 85%"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
