@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlignLeft, Pencil, Check, X } from "lucide-react";
+import { AlignLeft, Check, X } from "lucide-react";
 import ProfileSection from "./ProfileSection";
 import profileService from "@/services/profile.service";
 import { toast } from "sonner";
@@ -80,17 +80,9 @@ export default function SummarySection({ userId, summary, onUpdate }) {
           </div>
         </div>
       ) : summary ? (
-        <div className="flex items-start justify-between gap-4">
-          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-            {summary}
-          </p>
-          <button
-            onClick={() => setIsEditing(true)}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
-          >
-            <Pencil className="w-4 h-4" />
-          </button>
-        </div>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+          {summary}
+        </p>
       ) : null}
     </ProfileSection>
   );

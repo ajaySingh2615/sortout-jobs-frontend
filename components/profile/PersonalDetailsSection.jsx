@@ -1,16 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  User,
-  Pencil,
-  Check,
-  X,
-  MapPin,
-  Calendar,
-  Heart,
-  Globe,
-} from "lucide-react";
+import { User, Check, X, MapPin, Calendar, Heart, Globe } from "lucide-react";
 import ProfileSection from "./ProfileSection";
 import profileService from "@/services/profile.service";
 import { toast } from "sonner";
@@ -256,14 +247,6 @@ export default function PersonalDetailsSection({
               <p className="text-gray-900">{personalDetails.address}</p>
             </div>
           )}
-
-          <button
-            onClick={openEdit}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <Pencil className="w-4 h-4" />
-            Edit Details
-          </button>
         </div>
       ) : null}
     </ProfileSection>
