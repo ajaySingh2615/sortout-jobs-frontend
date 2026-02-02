@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Type, Pencil, Check, X } from "lucide-react";
+import { Type, Check, X } from "lucide-react";
 import ProfileSection from "./ProfileSection";
 import profileService from "@/services/profile.service";
 import { toast } from "sonner";
@@ -80,15 +80,7 @@ export default function HeadlineSection({ userId, headline, onUpdate }) {
           </div>
         </div>
       ) : headline ? (
-        <div className="flex items-start justify-between">
-          <p className="text-gray-700 leading-relaxed">{headline}</p>
-          <button
-            onClick={() => setIsEditing(true)}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <Pencil className="w-4 h-4" />
-          </button>
-        </div>
+        <p className="text-gray-700 leading-relaxed">{headline}</p>
       ) : null}
     </ProfileSection>
   );
