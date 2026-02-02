@@ -14,10 +14,6 @@ export default function BasicDetailsModal({
     fullName: "",
     cityId: "",
     localityId: "",
-    hasExperience: false,
-    experienceLevel: "",
-    currentSalary: "",
-    noticePeriod: "",
     headline: "",
   });
 
@@ -38,10 +34,6 @@ export default function BasicDetailsModal({
         fullName: initialData.fullName || "",
         cityId: initialData.cityId || "",
         localityId: initialData.localityId || "",
-        hasExperience: initialData.hasExperience || false,
-        experienceLevel: initialData?.experienceLevel || "",
-        currentSalary: initialData?.currentSalary || "",
-        noticePeriod: initialData?.noticePeriod || "",
         headline: initialData?.resumeHeadline || "",
       });
 
@@ -83,17 +75,6 @@ export default function BasicDetailsModal({
         setLocalities([]);
       }
     }
-
-    // Clear experience-related fields when unchecking "hasExperience"
-    if (field === "hasExperience" && !value) {
-      setFormData((prev) => ({
-        ...prev,
-        hasExperience: false,
-        experienceLevel: "",
-        currentSalary: "",
-        noticePeriod: "",
-      }));
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -104,23 +85,15 @@ export default function BasicDetailsModal({
 
     setLoading(true);
     try {
+      // Experience comes from Employment section - pass through existing values so they are not changed
       const payload = {
         fullName: formData.fullName.trim(),
         cityId: formData.cityId ? parseInt(formData.cityId) : null,
         localityId: formData.localityId ? parseInt(formData.localityId) : null,
-        hasExperience: formData.hasExperience,
-        experienceLevel:
-          formData.hasExperience && formData.experienceLevel
-            ? formData.experienceLevel
-            : null,
-        currentSalary:
-          formData.hasExperience && formData.currentSalary
-            ? parseInt(formData.currentSalary)
-            : null,
-        noticePeriod:
-          formData.hasExperience && formData.noticePeriod
-            ? formData.noticePeriod
-            : null,
+        hasExperience: initialData?.hasExperience ?? false,
+        experienceLevel: initialData?.experienceLevel || null,
+        currentSalary: initialData?.currentSalary ?? null,
+        noticePeriod: initialData?.noticePeriod || null,
         headline: formData.headline.trim() || null,
       };
 
@@ -202,87 +175,7 @@ export default function BasicDetailsModal({
             </div>
           </div>
 
-          {/* Experience */}
-          <div className="space-y-3">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.hasExperience}
-                onChange={(e) =>
-                  handleChange("hasExperience", e.target.checked)
-                }
-                className="w-4 h-4 text-red-600 rounded focus:ring-red-500"
-              />
-              <span className="text-sm font-medium text-gray-700">
-                I have work experience
-              </span>
-            </label>
-
-            {formData.hasExperience && (
-              <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Experience Level
-                    </label>
-                    <select
-                      value={formData.experienceLevel}
-                      onChange={(e) =>
-                        handleChange("experienceLevel", e.target.value)
-                      }
-                      className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-red-500 outline-none"
-                    >
-                      <option value="">Select Level</option>
-                      <option value="FRESHER">Fresher</option>
-                      <option value="MONTHS_1_6">1-6 Months</option>
-                      <option value="YEAR_1">1 Year</option>
-                      <option value="YEARS_2">2 Years</option>
-                      <option value="YEARS_3">3 Years</option>
-                      <option value="YEARS_4">4 Years</option>
-                      <option value="YEARS_5_PLUS">5+ Years</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Current Salary (Monthly ₹)
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.currentSalary}
-                      onChange={(e) =>
-                        handleChange("currentSalary", e.target.value)
-                      }
-                      placeholder="e.g. 50000"
-                      className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-red-500 outline-none"
-                    />
-                  </div>
-                </div>
-
-                {/* Notice Period */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Notice Period
-                  </label>
-                  <select
-                    value={formData.noticePeriod}
-                    onChange={(e) =>
-                      handleChange("noticePeriod", e.target.value)
-                    }
-                    className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-red-500 outline-none"
-                  >
-                    <option value="">Select Notice Period</option>
-                    <option value="15 Days or less">15 Days or less</option>
-                    <option value="1 Month">1 Month</option>
-                    <option value="2 Months">2 Months</option>
-                    <option value="3 Months+">3 Months+</option>
-                    <option value="Serving Notice Period">
-                      Serving Notice Period
-                    </option>
-                  </select>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Experience is calculated from Employment section - not editable here */}
 
           {/* Resume Headline */}
           <div>

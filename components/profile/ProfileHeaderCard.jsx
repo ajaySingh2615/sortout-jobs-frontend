@@ -18,7 +18,12 @@ import { formatExperienceLevel } from "@/constants/experienceLevels";
 import BasicDetailsModal from "./modals/BasicDetailsModal";
 import EmailChangeModal from "./modals/EmailChangeModal";
 
-export default function ProfileHeaderCard({ profile, onEditPhoto, onUpdate }) {
+export default function ProfileHeaderCard({
+  profile,
+  totalExperience,
+  onEditPhoto,
+  onUpdate,
+}) {
   const [showBasicModal, setShowBasicModal] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
 
@@ -164,14 +169,15 @@ export default function ProfileHeaderCard({ profile, onEditPhoto, onUpdate }) {
               value={profile?.cityName || "Not set"}
             />
 
-            {/* Experience */}
+            {/* Experience - from Employment total when available, else from onboarding */}
             <InfoItem
               icon={<Briefcase className="w-4 h-4" />}
               label="Experience"
               value={
-                profile?.hasExperience
+                totalExperience ||
+                (profile?.hasExperience
                   ? formatExperienceLevel(profile?.experienceLevel)
-                  : "Fresher"
+                  : "Fresher")
               }
             />
 

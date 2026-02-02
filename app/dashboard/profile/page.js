@@ -56,6 +56,28 @@ function ProfileContent() {
     toast.info("Photo upload coming soon!");
   };
 
+  const calculateTotalExperienceFromEmployments = (employments) => {
+    if (!employments || employments.length === 0) return null;
+    let totalMonths = 0;
+    const today = new Date();
+    employments.forEach((emp) => {
+      const startDate = new Date(emp.startDate);
+      const endDate = emp.isCurrent ? today : new Date(emp.endDate);
+      let yearsDiff = endDate.getFullYear() - startDate.getFullYear();
+      let monthsDiff = endDate.getMonth() - startDate.getMonth();
+      let months = yearsDiff * 12 + monthsDiff + 1;
+      totalMonths += months;
+    });
+    const years = Math.floor(totalMonths / 12);
+    const months = totalMonths % 12;
+    if (years === 0 && months <= 1) return "1 month";
+    if (years === 0) return `${months} months`;
+    if (months === 0) return `${years} ${years > 1 ? "years" : "year"}`;
+    return `${years} ${years > 1 ? "years" : "year"} ${months} ${
+      months > 1 ? "months" : "month"
+    }`;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -121,6 +143,9 @@ function ProfileContent() {
         {/* Profile Header */}
         <ProfileHeaderCard
           profile={profile}
+          totalExperience={calculateTotalExperienceFromEmployments(
+            profile?.employments
+          )}
           onEditPhoto={handleEditPhoto}
           onUpdate={handleUpdate}
         />
