@@ -197,6 +197,11 @@ export default function JobForm({ initialData = null, isEdit = false }) {
         await adminService.updateJob(initialData.id, payload);
         toast.success("Job updated successfully");
       } else {
+        if (!user?.id) {
+          toast.error("Session missing user ID. Please sign out and sign in again.");
+          setLoading(false);
+          return;
+        }
         await adminService.createJob(user.id, payload);
         toast.success("Job created successfully");
       }

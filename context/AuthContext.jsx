@@ -22,12 +22,12 @@ export function AuthProvider({ children }) {
     setIsLoading(false);
   }, []);
 
-  // Login
+  // Login (email/password - used for admin)
   const login = async (email, password) => {
     const response = await authService.login(email, password);
-    const { accessToken, refreshToken, email: userEmail, role } = response.data;
+    const { accessToken, refreshToken, email: userEmail, role, userId } = response.data;
 
-    const userData = { email: userEmail, role };
+    const userData = { id: userId, email: userEmail, role };
 
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
