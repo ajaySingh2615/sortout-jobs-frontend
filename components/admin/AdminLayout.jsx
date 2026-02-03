@@ -67,14 +67,14 @@ export default function AdminLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b px-4 py-3 flex items-center justify-between">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-3 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold">S</span>
+          <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
+            <span className="text-white text-sm font-semibold">S</span>
           </div>
-          <span className="font-bold text-gray-900">Admin Panel</span>
+          <span className="font-semibold text-gray-900 text-sm">Admin</span>
         </div>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -94,8 +94,8 @@ export default function AdminLayout({ children }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full bg-white border-r transition-all duration-300 ${
-          sidebarOpen ? "w-64" : "w-20"
+        className={`fixed top-0 left-0 z-50 h-full bg-white border-r border-gray-200 transition-all duration-300 ${
+          sidebarOpen ? "w-56" : "w-16"
         } ${
           mobileMenuOpen
             ? "translate-x-0"
@@ -103,20 +103,20 @@ export default function AdminLayout({ children }) {
         }`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b">
-          <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">S</span>
+        <div className="h-14 flex items-center justify-between px-3 border-b border-gray-200">
+          <Link href="/admin" className="flex items-center gap-2 min-w-0">
+            <div className="w-9 h-9 bg-red-600 rounded flex items-center justify-center shrink-0">
+              <span className="text-white text-sm font-semibold">S</span>
             </div>
             {sidebarOpen && (
-              <span className="text-lg font-bold text-gray-900">
-                Admin<span className="text-red-600">Panel</span>
+              <span className="text-sm font-semibold text-gray-900 truncate">
+                Admin
               </span>
             )}
           </Link>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="hidden lg:flex p-2 text-gray-400 hover:bg-gray-100 rounded-lg"
+            className="hidden lg:flex p-1.5 text-gray-400 hover:bg-gray-100 rounded"
           >
             <ChevronLeft
               className={`w-5 h-5 transition-transform ${
@@ -127,7 +127,7 @@ export default function AdminLayout({ children }) {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1">
+        <nav className="p-2 space-y-0.5">
           {sidebarItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
@@ -136,29 +136,27 @@ export default function AdminLayout({ children }) {
               <div key={item.name}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors ${
                     active
-                      ? "bg-red-50 text-red-600"
-                      : "text-gray-600 hover:bg-gray-100"
+                      ? "bg-slate-100 text-slate-900 font-medium"
+                      : "text-slate-600 hover:bg-slate-50"
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <Icon className="w-5 h-5 shrink-0" />
-                  {sidebarOpen && (
-                    <span className="font-medium">{item.name}</span>
-                  )}
+                  <Icon className="w-4 h-4 shrink-0" />
+                  {sidebarOpen && <span>{item.name}</span>}
                 </Link>
 
                 {/* Sub items */}
                 {item.subItems && sidebarOpen && active && (
-                  <div className="ml-8 mt-1 space-y-1">
+                  <div className="ml-6 mt-0.5 space-y-0.5">
                     {item.subItems.map((subItem) => (
                       <Link
                         key={subItem.name}
                         href={subItem.href}
-                        className={`block px-3 py-2 text-sm rounded-lg transition-colors ${
+                        className={`block px-2.5 py-1.5 text-xs rounded transition-colors ${
                           pathname === subItem.href
-                            ? "text-red-600 bg-red-50"
+                            ? "text-red-600 bg-red-50 font-medium"
                             : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
@@ -174,32 +172,32 @@ export default function AdminLayout({ children }) {
         </nav>
 
         {/* User section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-white">
+        <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-gray-200 bg-white">
           <div
-            className={`flex items-center gap-3 ${
+            className={`flex items-center gap-2 ${
               !sidebarOpen ? "justify-center" : ""
             }`}
           >
-            <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center shrink-0">
-              <span className="text-red-600 font-semibold">
+            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center shrink-0">
+              <span className="text-red-600 text-xs font-medium">
                 {user?.email?.charAt(0).toUpperCase() || "A"}
               </span>
             </div>
             {sidebarOpen && (
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-xs font-medium text-gray-900 truncate">
                   {user?.name || user?.email || "Admin"}
                 </p>
-                <p className="text-xs text-gray-500">Administrator</p>
+                <p className="text-[10px] text-gray-500">Admin</p>
               </div>
             )}
             {sidebarOpen && (
               <button
                 onClick={handleLogout}
-                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
                 title="Logout"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-4 h-4" />
               </button>
             )}
           </div>
@@ -209,10 +207,10 @@ export default function AdminLayout({ children }) {
       {/* Main content */}
       <main
         className={`transition-all duration-300 ${
-          sidebarOpen ? "lg:ml-64" : "lg:ml-20"
-        } pt-16 lg:pt-0`}
+          sidebarOpen ? "lg:ml-56" : "lg:ml-16"
+        } pt-14 lg:pt-0`}
       >
-        <div className="p-6">{children}</div>
+        <div className="p-4">{children}</div>
       </main>
     </div>
   );

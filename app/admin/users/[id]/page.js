@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import adminService from "@/services/admin.service";
@@ -11,12 +10,8 @@ import {
   ArrowLeft,
   Save,
   Loader2,
-  Mail,
-  Phone,
   Shield,
-  Calendar,
   Briefcase,
-  Bookmark,
   Key,
   UserCheck,
   Trash2,
@@ -24,7 +19,6 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Building2,
 } from "lucide-react";
 
 const ROLE_OPTIONS = [
@@ -217,8 +211,8 @@ export default function AdminUserDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-red-600" />
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-6 h-6 animate-spin text-red-600" />
       </div>
     );
   }
@@ -228,108 +222,84 @@ export default function AdminUserDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <Button
           variant="ghost"
           size="sm"
+          className="h-8 text-sm text-gray-600 -ml-1"
           onClick={() => router.push("/admin/users")}
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Users
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Back
         </Button>
       </div>
 
-      {/* User Header Card */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            {/* Avatar */}
-            <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden relative">
-              {user.profilePicture ? (
-                <Image
-                  src={user.profilePicture}
-                  alt={user.name || "User"}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <span className="text-3xl font-semibold text-gray-500">
-                  {(user.name || user.email || "?")[0].toUpperCase()}
+      {/* User Header */}
+      <div className="rounded border border-gray-200 bg-white p-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden relative shrink-0">
+            {user.profilePicture ? (
+              <Image
+                src={user.profilePicture}
+                alt={user.name || "User"}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <span className="text-lg font-semibold text-gray-500">
+                {(user.name || user.email || "?")[0].toUpperCase()}
+              </span>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <h1 className="text-lg font-semibold text-gray-900">
+                {user.name || "No Name"}
+              </h1>
+              <span
+                className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${
+                  ROLE_COLORS[user.role] || "bg-gray-100 text-gray-700"
+                }`}
+              >
+                {user.role}
+              </span>
+              {!user.isActive && (
+                <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-medium rounded">
+                  Disabled
                 </span>
               )}
             </div>
-
-            {/* Info */}
-            <div className="flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {user.name || "No Name"}
-                </h1>
-                <span
-                  className={`px-2 py-0.5 text-xs font-medium rounded ${
-                    ROLE_COLORS[user.role] || "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  {user.role}
-                </span>
-                {!user.isActive && (
-                  <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded">
-                    Disabled
-                  </span>
+            <div className="flex flex-wrap items-center gap-3 mt-0.5 text-xs text-gray-500">
+              <span className="truncate">
+                {user.email}
+                {user.emailVerified ? (
+                  <CheckCircle className="w-3.5 h-3.5 inline ml-0.5 text-green-500 align-middle" />
+                ) : (
+                  <XCircle className="w-3.5 h-3.5 inline ml-0.5 text-amber-500 align-middle" />
                 )}
-              </div>
-              <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-600">
-                <span className="flex items-center">
-                  <Mail className="w-4 h-4 mr-1" />
-                  {user.email}
-                  {user.emailVerified ? (
-                    <CheckCircle className="w-4 h-4 ml-1 text-green-500" />
-                  ) : (
-                    <XCircle className="w-4 h-4 ml-1 text-yellow-500" />
-                  )}
-                </span>
-                {user.phone && (
-                  <span className="flex items-center">
-                    <Phone className="w-4 h-4 mr-1" />
-                    {user.phone}
-                  </span>
-                )}
-                <span className="flex items-center">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  Joined {formatDate(user.createdAt)}
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-500">
-                <span className="flex items-center">
-                  <Briefcase className="w-4 h-4 mr-1" />
-                  {user.applicationsCount || 0} applications
-                </span>
-                <span className="flex items-center">
-                  <Bookmark className="w-4 h-4 mr-1" />
-                  {user.savedJobsCount || 0} saved jobs
-                </span>
-                <span className="flex items-center">
-                  <Shield className="w-4 h-4 mr-1" />
-                  {user.authProvider}
-                </span>
-              </div>
+              </span>
+              {user.phone && <span>· {user.phone}</span>}
+              <span>· Joined {formatDate(user.createdAt)}</span>
+              <span>· {user.applicationsCount || 0} applications</span>
+              <span>· {user.savedJobsCount || 0} saved</span>
+              <span>· {user.authProvider}</span>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Tabs */}
       <div className="border-b border-gray-200">
-        <nav className="flex gap-4">
+        <nav className="flex gap-2">
           {["details", "activity", "sessions"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`py-3 px-1 border-b-2 font-medium text-sm capitalize transition-colors ${
+              className={`py-2 px-2 border-b-2 text-sm capitalize transition-colors ${
                 activeTab === tab
-                  ? "border-red-600 text-red-600"
+                  ? "border-red-600 text-red-600 font-medium"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -341,16 +311,16 @@ export default function AdminUserDetailPage() {
 
       {/* Tab Content */}
       {activeTab === "details" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           {/* Edit Form */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Edit User Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="lg:col-span-2 rounded border border-gray-200 bg-white p-4">
+            <h2 className="text-sm font-semibold text-gray-900 mb-3">
+              Edit User Details
+            </h2>
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-gray-600 mb-0.5">
                     Name
                   </label>
                   <input
@@ -358,11 +328,11 @@ export default function AdminUserDetailPage() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-gray-600 mb-0.5">
                     Email
                   </label>
                   <input
@@ -370,11 +340,11 @@ export default function AdminUserDetailPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-gray-600 mb-0.5">
                     Phone
                   </label>
                   <input
@@ -382,18 +352,18 @@ export default function AdminUserDetailPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-gray-600 mb-0.5">
                     Role
                   </label>
                   <select
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                   >
                     {ROLE_OPTIONS.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -404,117 +374,121 @@ export default function AdminUserDetailPage() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-6">
-                <label className="flex items-center gap-2 cursor-pointer">
+              <div className="flex flex-wrap gap-4">
+                <label className="flex items-center gap-1.5 cursor-pointer">
                   <input
                     type="checkbox"
                     name="emailVerified"
                     checked={formData.emailVerified}
                     onChange={handleChange}
-                    className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                    className="w-3.5 h-3.5 text-red-600 border-gray-300 rounded focus:ring-red-500"
                   />
-                  <span className="text-sm text-gray-700">Email Verified</span>
+                  <span className="text-xs text-gray-700">Email Verified</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-1.5 cursor-pointer">
                   <input
                     type="checkbox"
                     name="isActive"
                     checked={formData.isActive}
                     onChange={handleChange}
-                    className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                    className="w-3.5 h-3.5 text-red-600 border-gray-300 rounded focus:ring-red-500"
                   />
-                  <span className="text-sm text-gray-700">Account Active</span>
+                  <span className="text-xs text-gray-700">Account Active</span>
                 </label>
               </div>
 
-              <div className="flex justify-end pt-4">
+              <div className="flex justify-end pt-2">
                 <Button
+                  size="sm"
                   onClick={handleSave}
                   disabled={saving}
                   className="bg-red-600 hover:bg-red-700"
                 >
                   {saving ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
                   ) : (
-                    <Save className="w-4 h-4 mr-2" />
+                    <Save className="w-4 h-4 mr-1.5" />
                   )}
-                  Save Changes
+                  Save
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Actions & Profile Summary */}
-          <div className="space-y-6">
+          {/* Sidebar */}
+          <div className="space-y-3">
             {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+            <div className="rounded border border-gray-200 bg-white p-3">
+              <h2 className="text-xs font-semibold text-gray-900 mb-2">
+                Quick Actions
+              </h2>
+              <div className="space-y-1.5">
                 {!user.emailVerified && user.authProvider === "LOCAL" && (
                   <Button
                     variant="outline"
-                    className="w-full justify-start"
+                    size="sm"
+                    className="w-full justify-start h-8 text-xs border-gray-200"
                     onClick={handleVerifyEmail}
                     disabled={actionLoading === "verify"}
                   >
                     {actionLoading === "verify" ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                     ) : (
-                      <UserCheck className="w-4 h-4 mr-2" />
+                      <UserCheck className="w-3.5 h-3.5 mr-1.5" />
                     )}
-                    Verify Email Manually
+                    Verify Email
                   </Button>
                 )}
                 {user.authProvider === "LOCAL" && (
                   <Button
                     variant="outline"
-                    className="w-full justify-start"
+                    size="sm"
+                    className="w-full justify-start h-8 text-xs border-gray-200"
                     onClick={handleSendPasswordReset}
                     disabled={actionLoading === "password"}
                   >
                     {actionLoading === "password" ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                     ) : (
-                      <Key className="w-4 h-4 mr-2" />
+                      <Key className="w-3.5 h-3.5 mr-1.5" />
                     )}
-                    Send Password Reset
+                    Password Reset
                   </Button>
                 )}
                 <Button
                   variant="outline"
-                  className="w-full justify-start"
+                  size="sm"
+                  className="w-full justify-start h-8 text-xs border-gray-200"
                   onClick={handleRevokeAllSessions}
                   disabled={actionLoading === "sessions"}
                 >
                   {actionLoading === "sessions" ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                   ) : (
-                    <LogOut className="w-4 h-4 mr-2" />
+                    <LogOut className="w-3.5 h-3.5 mr-1.5" />
                   )}
                   Revoke All Sessions
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Profile Summary */}
             {user.profileSummary && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Profile Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 text-sm">
+              <div className="rounded border border-gray-200 bg-white p-3">
+                <h2 className="text-xs font-semibold text-gray-900 mb-2">
+                  Profile Summary
+                </h2>
+                <div className="space-y-1.5 text-xs">
                   {user.profileSummary.fullName && (
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-2">
                       <span className="text-gray-500">Full Name</span>
-                      <span className="font-medium">
+                      <span className="font-medium text-right truncate">
                         {user.profileSummary.fullName}
                       </span>
                     </div>
                   )}
                   {user.profileSummary.gender && (
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-2">
                       <span className="text-gray-500">Gender</span>
                       <span className="font-medium">
                         {user.profileSummary.gender}
@@ -522,7 +496,7 @@ export default function AdminUserDetailPage() {
                     </div>
                   )}
                   {user.profileSummary.educationLevel && (
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-2">
                       <span className="text-gray-500">Education</span>
                       <span className="font-medium">
                         {user.profileSummary.educationLevel}
@@ -530,7 +504,7 @@ export default function AdminUserDetailPage() {
                     </div>
                   )}
                   {user.profileSummary.experienceLevel && (
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-2">
                       <span className="text-gray-500">Experience</span>
                       <span className="font-medium">
                         {user.profileSummary.experienceLevel}
@@ -538,28 +512,28 @@ export default function AdminUserDetailPage() {
                     </div>
                   )}
                   {user.profileSummary.preferredCity && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Preferred City</span>
-                      <span className="font-medium">
+                    <div className="flex justify-between gap-2">
+                      <span className="text-gray-500">City</span>
+                      <span className="font-medium truncate">
                         {user.profileSummary.preferredCity}
                       </span>
                     </div>
                   )}
                   {user.profileSummary.preferredRole && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Preferred Role</span>
-                      <span className="font-medium">
+                    <div className="flex justify-between gap-2">
+                      <span className="text-gray-500">Role</span>
+                      <span className="font-medium truncate">
                         {user.profileSummary.preferredRole}
                       </span>
                     </div>
                   )}
-                  <div className="flex justify-between pt-2 border-t">
-                    <span className="text-gray-500">Profile Status</span>
+                  <div className="flex justify-between gap-2 pt-1.5 border-t border-gray-100">
+                    <span className="text-gray-500">Status</span>
                     <span
                       className={`font-medium ${
                         user.profileSummary.profileCompleted
                           ? "text-green-600"
-                          : "text-yellow-600"
+                          : "text-amber-600"
                       }`}
                     >
                       {user.profileSummary.profileCompleted
@@ -567,66 +541,62 @@ export default function AdminUserDetailPage() {
                         : "Incomplete"}
                     </span>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             )}
 
             {/* Danger Zone */}
-            <Card className="border-red-200">
-              <CardHeader>
-                <CardTitle className="text-red-600">Danger Zone</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  variant="outline"
-                  className="w-full border-red-300 text-red-600 hover:bg-red-50"
-                  onClick={handleDelete}
-                  disabled={actionLoading === "delete"}
-                >
-                  {actionLoading === "delete" ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Trash2 className="w-4 h-4 mr-2" />
-                  )}
-                  Delete User Account
-                </Button>
-                <p className="text-xs text-gray-500 mt-2">
-                  This action cannot be undone. All user data will be
-                  permanently deleted.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="rounded border border-red-200 bg-white p-3">
+              <h2 className="text-xs font-semibold text-red-600 mb-2">
+                Danger Zone
+              </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full h-8 text-xs border-red-200 text-red-600 hover:bg-red-50"
+                onClick={handleDelete}
+                disabled={actionLoading === "delete"}
+              >
+                {actionLoading === "delete" ? (
+                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                ) : (
+                  <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                )}
+                Delete User
+              </Button>
+              <p className="text-[10px] text-gray-500 mt-1.5">
+                Permanent. Cannot be undone.
+              </p>
+            </div>
           </div>
         </div>
       )}
 
       {activeTab === "activity" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Job Applications</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded border border-gray-200 bg-white overflow-hidden">
+          <div className="px-3 py-2 border-b border-gray-100">
+            <h2 className="text-sm font-semibold text-gray-900">
+              Recent Job Applications
+            </h2>
+          </div>
+          <div className="p-3">
             {user.recentApplications?.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {user.recentApplications.map((app) => (
                   <div
                     key={app.applicationId}
-                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                    className="flex items-center justify-between py-2.5 px-3 border border-gray-100 rounded hover:bg-gray-50/80"
                   >
-                    <div>
-                      <h4 className="font-medium text-gray-900">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-sm font-medium text-gray-900 truncate">
                         {app.jobTitle}
                       </h4>
-                      <p className="text-sm text-gray-500 flex items-center">
-                        <Building2 className="w-4 h-4 mr-1" />
-                        {app.company}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        Applied {formatDate(app.appliedAt)}
+                      <p className="text-xs text-gray-500 truncate">
+                        {app.company} · Applied {formatDate(app.appliedAt)}
                       </p>
                     </div>
                     <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full ${
+                      className={`ml-2 px-2 py-0.5 text-[10px] font-medium rounded shrink-0 ${
                         APPLICATION_STATUS_COLORS[app.status] ||
                         "bg-gray-100 text-gray-700"
                       }`}
@@ -638,70 +608,65 @@ export default function AdminUserDetailPage() {
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500">
-                <Briefcase className="w-12 h-12 mx-auto text-gray-300 mb-2" />
-                <p>No job applications yet</p>
+                <Briefcase className="w-10 h-10 mx-auto text-gray-300 mb-1.5" />
+                <p className="text-sm">No job applications yet</p>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {activeTab === "sessions" && (
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>
+        <div className="rounded border border-gray-200 bg-white overflow-hidden">
+          <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-gray-900">
               Active Sessions ({user.activeSessionsCount || 0})
-            </CardTitle>
+            </h2>
             {user.activeSessions?.length > 0 && (
               <Button
                 variant="outline"
                 size="sm"
+                className="h-7 text-xs border-gray-200"
                 onClick={handleRevokeAllSessions}
                 disabled={actionLoading === "sessions"}
               >
                 {actionLoading === "sessions" ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
                 ) : (
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className="w-3.5 h-3.5 mr-1" />
                 )}
                 Revoke All
               </Button>
             )}
-          </CardHeader>
-          <CardContent>
+          </div>
+          <div className="p-3">
             {user.activeSessions?.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {user.activeSessions.map((session) => (
                   <div
                     key={session.id}
-                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                    className="flex items-center justify-between py-2.5 px-3 border border-gray-100 rounded hover:bg-gray-50/80"
                   >
-                    <div>
-                      <p className="font-mono text-sm text-gray-700">
-                        Token: {session.tokenPreview}
+                    <div className="min-w-0 flex-1">
+                      <p className="font-mono text-xs text-gray-700 truncate">
+                        {session.tokenPreview}
                       </p>
-                      <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                        <span className="flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          Created: {formatDate(session.createdAt)}
-                        </span>
-                        <span className="flex items-center">
-                          <Clock className="w-3 h-3 mr-1" />
-                          Expires: {formatDate(session.expiryDate)}
-                        </span>
-                      </div>
+                      <p className="text-[10px] text-gray-500 mt-0.5">
+                        Created {formatDate(session.createdAt)} · Expires{" "}
+                        {formatDate(session.expiryDate)}
+                      </p>
                     </div>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
+                      className="h-7 w-7 p-0 ml-2 text-red-600 hover:bg-red-50 shrink-0"
                       onClick={() => handleRevokeSession(session.id)}
                       disabled={actionLoading === `session-${session.id}`}
-                      className="text-red-600 hover:bg-red-50"
                     >
                       {actionLoading === `session-${session.id}` ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       ) : (
-                        <XCircle className="w-4 h-4" />
+                        <XCircle className="w-3.5 h-3.5" />
                       )}
                     </Button>
                   </div>
@@ -709,12 +674,12 @@ export default function AdminUserDetailPage() {
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500">
-                <Shield className="w-12 h-12 mx-auto text-gray-300 mb-2" />
-                <p>No active sessions</p>
+                <Shield className="w-10 h-10 mx-auto text-gray-300 mb-1.5" />
+                <p className="text-sm">No active sessions</p>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );
