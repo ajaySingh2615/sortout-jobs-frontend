@@ -32,14 +32,15 @@ const sidebarItems = [
     ],
   },
   {
-    name: "Applications",
-    href: "/admin/applications",
-    icon: FileText,
-  },
-  {
     name: "Users",
     href: "/admin/users",
     icon: Users,
+    subItems: [{ name: "All Users", href: "/admin/users" }],
+  },
+  {
+    name: "Applications",
+    href: "/admin/applications",
+    icon: FileText,
   },
   {
     name: "Settings",
@@ -95,7 +96,11 @@ export default function AdminLayout({ children }) {
       <aside
         className={`fixed top-0 left-0 z-50 h-full bg-white border-r transition-all duration-300 ${
           sidebarOpen ? "w-64" : "w-20"
-        } ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+        } ${
+          mobileMenuOpen
+            ? "translate-x-0"
+            : "-translate-x-full lg:translate-x-0"
+        }`}
       >
         {/* Logo */}
         <div className="h-16 flex items-center justify-between px-4 border-b">
@@ -114,7 +119,9 @@ export default function AdminLayout({ children }) {
             className="hidden lg:flex p-2 text-gray-400 hover:bg-gray-100 rounded-lg"
           >
             <ChevronLeft
-              className={`w-5 h-5 transition-transform ${!sidebarOpen ? "rotate-180" : ""}`}
+              className={`w-5 h-5 transition-transform ${
+                !sidebarOpen ? "rotate-180" : ""
+              }`}
             />
           </button>
         </div>
@@ -137,7 +144,9 @@ export default function AdminLayout({ children }) {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <Icon className="w-5 h-5 shrink-0" />
-                  {sidebarOpen && <span className="font-medium">{item.name}</span>}
+                  {sidebarOpen && (
+                    <span className="font-medium">{item.name}</span>
+                  )}
                 </Link>
 
                 {/* Sub items */}
@@ -166,7 +175,11 @@ export default function AdminLayout({ children }) {
 
         {/* User section */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-white">
-          <div className={`flex items-center gap-3 ${!sidebarOpen ? "justify-center" : ""}`}>
+          <div
+            className={`flex items-center gap-3 ${
+              !sidebarOpen ? "justify-center" : ""
+            }`}
+          >
             <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center shrink-0">
               <span className="text-red-600 font-semibold">
                 {user?.email?.charAt(0).toUpperCase() || "A"}
