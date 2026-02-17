@@ -7,9 +7,15 @@ import authService from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+const COUNTRY_CODES = [
+  { code: "+91", label: "India (+91)" },
+  { code: "+1", label: "US / Canada (+1)" },
+];
+
 export default function PhoneLoginForm() {
   const [step, setStep] = useState(1); // 1 = phone, 2 = otp
   const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+91");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -19,14 +25,13 @@ export default function PhoneLoginForm() {
 
   const validatePhone = (phoneNumber) => {
     const digits = phoneNumber.replace(/\D/g, "");
-    return digits.length === 10 || (digits.length === 11 && digits.startsWith("1"));
+    return digits.length === 10;
   };
 
   const formatPhone = (phoneNumber) => {
-    const cleaned = phoneNumber.replace(/\s/g, "").replace(/\D/g, "").slice(-10);
-    if (cleaned.length === 10) return `+1${cleaned}`;
-    if (cleaned.length === 11 && cleaned.startsWith("1")) return `+${cleaned}`;
-    return `+${cleaned || "1"}`;
+    const digits = phoneNumber.replace(/\D/g, "").slice(0, 10);
+    const prefix = countryCode.replace("+", "");
+    return `+${prefix}${digits}`;
   };
 
   // Format phone display with dashes
@@ -198,12 +203,26 @@ export default function PhoneLoginForm() {
     <div className="space-y-6">
       {step === 1 ? (
         <form onSubmit={handleSendOtp} className="space-y-4">
-          {/* Phone Input with Dashes */}
+          {/* Phone Input: country code inside left prefix, digits take full width */}
           <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:border-red-300 focus-within:ring-2 focus-within:ring-red-100 transition-all">
-            <div className="flex items-center justify-center px-4 py-4 bg-gray-100 text-gray-600 font-medium border-r border-gray-200">
-              +1
+            <div className="flex items-center border-r border-gray-200 bg-gray-100 shrink-0">
+              <select
+                value={countryCode}
+                onChange={(e) => {
+                  setCountryCode(e.target.value);
+                  setError("");
+                }}
+                className="h-14 pl-3 pr-8 py-2 bg-transparent text-gray-700 font-medium focus:outline-none border-0 cursor-pointer text-base"
+                title="Country code"
+              >
+                {COUNTRY_CODES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.code}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="relative flex-1">
+            <div className="relative flex-1 min-w-0">
               <input
                 type="tel"
                 value={formatPhoneDisplay(phone)}
@@ -230,7 +249,7 @@ export default function PhoneLoginForm() {
           <div className="text-center text-sm text-gray-500 mb-4">
             Enter the code sent to{" "}
             <span className="font-medium text-gray-700">
-              +1 {formatPhoneDisplay(phone)}
+              {countryCode} {formatPhoneDisplay(phone)}
             </span>
           </div>
 
