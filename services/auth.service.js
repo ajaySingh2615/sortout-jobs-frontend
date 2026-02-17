@@ -1,13 +1,13 @@
 import api from "./api";
 
 const authService = {
-  // Login
+  // Login (email/password)
   async login(email, password) {
     const response = await api.post("/auth/login", { email, password });
     return response.data;
   },
 
-  // Register
+  // Register (email/password)
   async register(name, email, password) {
     const response = await api.post("/auth/register", {
       name,
@@ -35,15 +35,13 @@ const authService = {
   // Refresh token
   async refreshToken() {
     const refreshToken = localStorage.getItem("refreshToken");
-    const response = await api.post("/auth/refresh-token", { refreshToken });
+    const response = await api.post("/auth/refresh", { refreshToken });
     return response.data;
   },
 
   // Forgot password
   async forgotPassword(email) {
-    const response = await api.post(
-      `/auth/forgot-password?email=${encodeURIComponent(email)}`
-    );
+    const response = await api.post("/auth/forgot-password", { email });
     return response.data;
   },
 
@@ -58,69 +56,54 @@ const authService = {
 
   // Verify email
   async verifyEmail(token) {
-    const response = await api.get(`/auth/verify-email?token=${token}`);
+    const response = await api.post("/auth/verify-email", { token });
     return response.data;
   },
 
   // Resend verification
   async resendVerification(email) {
-    const response = await api.post(
-      `/auth/resend-verification?email=${encodeURIComponent(email)}`
-    );
+    const response = await api.post("/auth/resend-verify-email", { email });
     return response.data;
   },
 
-  // Send OTP
+  // Send OTP to phone
   async sendOtp(phone) {
-    const response = await api.post("/auth/phone/send-otp", { phone });
+    const response = await api.post("/auth/request-otp", { phone });
     return response.data;
   },
 
-  // Verify OTP
-  async verifyOtp(phone, otp) {
-    const response = await api.post("/auth/phone/verify-otp", { phone, otp });
+  // Verify OTP (field name is "code", not "otp")
+  async verifyOtp(phone, code) {
+    const response = await api.post("/auth/verify-otp", { phone, code });
     return response.data;
   },
 
-  // Get profile
-  async getProfile(userId) {
-    const response = await api.get(`/users/${userId}`);
+  // Get current user profile
+  async getMe() {
+    const response = await api.get("/auth/me");
     return response.data;
   },
 
-  // Update profile
-  async updateProfile(userId, data) {
-    const response = await api.put(`/profile/${userId}`, data);
+  // Link phone to existing account (requires auth + OTP)
+  async linkPhone(phone, code) {
+    const response = await api.post("/auth/link-phone", { phone, code });
     return response.data;
   },
 
-  // Change password
-  async changePassword(userId, currentPassword, newPassword) {
-    const response = await api.post(`/profile/${userId}/change-password`, {
-      currentPassword,
-      newPassword,
+  // Link email to existing account (requires auth)
+  async linkEmail(email, password, name) {
+    const response = await api.post("/auth/link-email", {
+      email,
+      password,
+      ...(name ? { name } : {}),
     });
     return response.data;
   },
 
-  // Get sessions
-  async getSessions(userId) {
-    const response = await api.get(`/auth/sessions/${userId}`);
+  // Google OAuth (send id_token from client-side Google Sign-In)
+  async googleAuth(idToken) {
+    const response = await api.post("/auth/google", { idToken });
     return response.data;
-  },
-
-  // Logout all sessions
-  async logoutAllSessions(userId) {
-    const response = await api.post(`/auth/logout-all/${userId}`);
-    return response.data;
-  },
-
-  // Google OAuth URL
-  getGoogleOAuthUrl() {
-    return (
-      process.env.NEXT_PUBLIC_GOOGLE_OAUTH_URL ||
-      "http://localhost:8080/oauth2/authorization/google"
-    );
   },
 };
 

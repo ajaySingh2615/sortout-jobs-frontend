@@ -22,37 +22,31 @@ export function AuthProvider({ children }) {
     setIsLoading(false);
   }, []);
 
-  // Login (email/password - used for admin)
-  const login = async (email, password) => {
-    const response = await authService.login(email, password);
-    const { accessToken, refreshToken, email: userEmail, role, userId } = response.data;
-
-    const userData = { id: userId, email: userEmail, role };
+  // Helper: store auth data from our backend response
+  const storeAuth = (data) => {
+    const { user: userData, accessToken, refreshToken } = data;
 
     localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
+    if (refreshToken) {
+      localStorage.setItem("refreshToken", refreshToken);
+    }
     localStorage.setItem("user", JSON.stringify(userData));
 
     setToken(accessToken);
     setUser(userData);
+  };
 
+  // Login (email/password - used for admin)
+  const login = async (email, password) => {
+    const response = await authService.login(email, password);
+    storeAuth(response.data);
     return response;
   };
 
   // Register
   const register = async (name, email, password) => {
     const response = await authService.register(name, email, password);
-    const { accessToken, refreshToken, email: userEmail, role } = response.data;
-
-    const userData = { name, email: userEmail, role };
-
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
-    localStorage.setItem("user", JSON.stringify(userData));
-
-    setToken(accessToken);
-    setUser(userData);
-
+    storeAuth(response.data);
     return response;
   };
 
@@ -63,30 +57,26 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  // Login with OTP
-  const loginWithOtp = async (phone, otp) => {
-    const response = await authService.verifyOtp(phone, otp);
-    const { accessToken, refreshToken, email, role, userId, isNewUser } =
-      response.data;
-
-    const userData = { id: userId, email, phone, role, isNewUser };
-
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
-    localStorage.setItem("user", JSON.stringify(userData));
-
-    setToken(accessToken);
-    setUser(userData);
-
+  // Login with OTP (phone)
+  const loginWithOtp = async (phone, code) => {
+    const response = await authService.verifyOtp(phone, code);
+    storeAuth(response.data);
     return response;
   };
 
-  // Handle OAuth callback
-  const handleOAuthCallback = (accessToken, refreshToken, email, role) => {
-    const userData = { email, role };
+  // Google OAuth (id_token flow)
+  const loginWithGoogle = async (idToken) => {
+    const response = await authService.googleAuth(idToken);
+    storeAuth(response.data);
+    return response;
+  };
 
+  // Handle OAuth callback (if using redirect flow)
+  const handleOAuthCallback = (accessToken, refreshToken, userData) => {
     localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
+    if (refreshToken) {
+      localStorage.setItem("refreshToken", refreshToken);
+    }
     localStorage.setItem("user", JSON.stringify(userData));
 
     setToken(accessToken);
@@ -102,6 +92,7 @@ export function AuthProvider({ children }) {
     register,
     logout,
     loginWithOtp,
+    loginWithGoogle,
     handleOAuthCallback,
   };
 

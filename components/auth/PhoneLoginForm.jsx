@@ -18,14 +18,15 @@ export default function PhoneLoginForm() {
   const otpRefs = useRef([]);
 
   const validatePhone = (phoneNumber) => {
-    const phoneRegex = /^(\+91)?[6-9]\d{9}$/;
-    return phoneRegex.test(phoneNumber.replace(/\s/g, ""));
+    const digits = phoneNumber.replace(/\D/g, "");
+    return digits.length === 10 || (digits.length === 11 && digits.startsWith("1"));
   };
 
   const formatPhone = (phoneNumber) => {
-    const cleaned = phoneNumber.replace(/\s/g, "");
-    if (cleaned.startsWith("+91")) return cleaned;
-    return `+91${cleaned}`;
+    const cleaned = phoneNumber.replace(/\s/g, "").replace(/\D/g, "").slice(-10);
+    if (cleaned.length === 10) return `+1${cleaned}`;
+    if (cleaned.length === 11 && cleaned.startsWith("1")) return `+${cleaned}`;
+    return `+${cleaned || "1"}`;
   };
 
   // Format phone display with dashes
@@ -148,7 +149,8 @@ export default function PhoneLoginForm() {
     try {
       const formattedPhone = formatPhone(phone);
       const response = await loginWithOtp(formattedPhone, otpString);
-      const isNewUser = response.data?.isNewUser;
+      const userData = response.data?.user;
+      const isNewUser = userData?.name === "User" && !userData?.email;
 
       toast.success("Login successful! Welcome to SortOut Jobs");
 
@@ -158,12 +160,11 @@ export default function PhoneLoginForm() {
         router.push("/dashboard");
       }
     } catch (err) {
-      const errorCode = err.response?.data?.errorCode;
       const errorMsg = err.response?.data?.message;
 
-      if (errorCode === "OTP_001") {
+      if (errorMsg?.toLowerCase().includes("expired")) {
         setError("OTP has expired. Please request a new one.");
-      } else if (errorCode === "OTP_002") {
+      } else if (errorMsg?.toLowerCase().includes("invalid")) {
         setError("Invalid OTP. Please check and try again.");
       } else {
         setError(errorMsg || "Verification failed. Please try again.");
@@ -200,7 +201,7 @@ export default function PhoneLoginForm() {
           {/* Phone Input with Dashes */}
           <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:border-red-300 focus-within:ring-2 focus-within:ring-red-100 transition-all">
             <div className="flex items-center justify-center px-4 py-4 bg-gray-100 text-gray-600 font-medium border-r border-gray-200">
-              +91
+              +1
             </div>
             <div className="relative flex-1">
               <input
@@ -229,7 +230,7 @@ export default function PhoneLoginForm() {
           <div className="text-center text-sm text-gray-500 mb-4">
             Enter the code sent to{" "}
             <span className="font-medium text-gray-700">
-              +91 {formatPhoneDisplay(phone)}
+              +1 {formatPhoneDisplay(phone)}
             </span>
           </div>
 

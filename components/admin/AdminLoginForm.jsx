@@ -32,9 +32,9 @@ export default function AdminLoginForm() {
     setLoading(true);
     try {
       const response = await login(email, password);
-      const role = response.data?.role;
+      const role = response.data?.user?.role;
 
-      if (role !== "ADMIN") {
+      if (role !== "ADMIN" && role !== "admin") {
         // Not an admin - logout and show error
         await logout();
         setError("Access denied. Admin credentials required.");

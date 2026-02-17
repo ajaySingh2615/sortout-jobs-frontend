@@ -22,7 +22,7 @@ export default function AdminRoute({ children }) {
   }
 
   // Not logged in or not admin -> show admin login form
-  if (!isAuthenticated || user?.role !== "ADMIN") {
+  if (!isAuthenticated || user?.role?.toLowerCase() !== "admin") {
     return <AdminLoginForm />;
   }
 
