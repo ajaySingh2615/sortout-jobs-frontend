@@ -27,9 +27,7 @@ const profileService = {
 
   // Update profile summary
   updateSummary: (userId, summary) =>
-    api.put(`/profile/${userId}/summary`, summary, {
-      headers: { "Content-Type": "text/plain" },
-    }),
+    api.put(`/profile/${userId}/summary`, { summary }),
 
   // Basic Profile & Email
   updateBasicProfile: (userId, data) =>
