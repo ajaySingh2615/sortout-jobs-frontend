@@ -186,186 +186,138 @@ export default function DashboardPage() {
         <DashboardNavbar />
 
         <main className="pt-20 pb-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Welcome Section */}
-            <div className="mb-8">
-              <h1 className="text-2xl font-bold text-gray-900">
-                Welcome back
-                {user?.fullName ? `, ${user.fullName.split(" ")[0]}` : ""}! 👋
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            {/* Header + Search — single minimal row */}
+            <div className="mb-6">
+              <h1 className="text-lg font-semibold text-gray-900 mb-4">
+                {user?.fullName ? user.fullName.split(" ")[0] : "Jobs"}
               </h1>
-              <p className="text-gray-600">
-                Here are the latest job opportunities for you
-              </p>
-            </div>
-
-            {/* Search & Filters */}
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    placeholder="Search jobs by title, company, or keyword..."
-                    value={searchKeyword}
-                    onChange={(e) => setSearchKeyword(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  />
-                </div>
-                <div className="flex gap-2 flex-wrap">
-                  <select
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
-                    className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
-                  >
-                    <option value="">All Locations</option>
-                    <option value="REMOTE">Remote</option>
-                    <option value="ONSITE">On-site</option>
-                    <option value="HYBRID">Hybrid</option>
-                  </select>
-                  <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
-                  >
-                    <option value="">All Types</option>
-                    <option value="FULL_TIME">Full-time</option>
-                    <option value="PART_TIME">Part-time</option>
-                    <option value="CONTRACT">Contract</option>
-                    <option value="INTERNSHIP">Internship</option>
-                  </select>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:items-center">
+                <input
+                  type="text"
+                  placeholder="Search by title, company, keyword..."
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                  className="flex-1 min-w-0 h-10 px-3 text-sm border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                />
+                <select
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                  className="sm:w-[120px] h-10 px-3 text-sm border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-red-500"
+                >
+                  <option value="">Location</option>
+                  <option value="REMOTE">Remote</option>
+                  <option value="ONSITE">On-site</option>
+                  <option value="HYBRID">Hybrid</option>
+                </select>
+                <select
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                  className="sm:w-[120px] h-10 px-3 text-sm border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-red-500"
+                >
+                  <option value="">Type</option>
+                  <option value="FULL_TIME">Full-time</option>
+                  <option value="PART_TIME">Part-time</option>
+                  <option value="CONTRACT">Contract</option>
+                  <option value="INTERNSHIP">Internship</option>
+                </select>
+                <div className="flex items-center gap-2 sm:shrink-0">
                   <Button
-                    className="bg-red-600 hover:bg-red-700 px-6"
+                    size="sm"
+                    className="h-10 px-4 bg-red-600 hover:bg-red-700 text-white rounded-md"
                     onClick={handleSearch}
                     disabled={isSearching}
                   >
                     {isSearching ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
-                      <Search className="w-4 h-4 mr-2" />
+                      <>
+                        <Search className="w-4 h-4 mr-1.5" />
+                        Search
+                      </>
                     )}
-                    Search
                   </Button>
                   {(searchKeyword || selectedLocation || selectedType) && (
-                    <Button variant="outline" onClick={handleClearSearch}>
+                    <button
+                      type="button"
+                      onClick={handleClearSearch}
+                      className="h-10 px-3 text-sm text-gray-500 hover:text-gray-700"
+                    >
                       Clear
-                    </Button>
+                    </button>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-white rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-red-100 rounded-lg">
-                    <Briefcase className="w-5 h-5 text-red-600" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-900">
-                      {stats.newJobsToday}
-                    </div>
-                    <div className="text-sm text-gray-500">New Jobs Today</div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <FileText className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-900">
-                      {stats.applicationsSent}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      Applications Sent
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-yellow-100 rounded-lg">
-                    <Bookmark className="w-5 h-5 text-yellow-600" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-900">
-                      {stats.savedJobs}
-                    </div>
-                    <div className="text-sm text-gray-500">Saved Jobs</div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Phone className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-900">
-                      {stats.interviewCalls}
-                    </div>
-                    <div className="text-sm text-gray-500">Interview Calls</div>
-                  </div>
-                </div>
-              </div>
+            {/* Stats — compact inline */}
+            <div className="flex flex-wrap gap-6 mb-6 text-sm text-gray-500">
+              <span className="flex items-center gap-1.5">
+                <Briefcase className="w-4 h-4 text-gray-400" />
+                {stats.newJobsToday} new today
+              </span>
+              <span className="flex items-center gap-1.5">
+                <FileText className="w-4 h-4 text-gray-400" />
+                {stats.applicationsSent} applied
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Bookmark className="w-4 h-4 text-gray-400" />
+                {stats.savedJobs} saved
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Phone className="w-4 h-4 text-gray-400" />
+                {stats.interviewCalls} interviews
+              </span>
             </div>
 
-            {/* Job Listings */}
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">
-                {searchKeyword || selectedLocation || selectedType
-                  ? "Search Results"
-                  : "Recommended Jobs"}
+            {/* Job list header */}
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-medium text-gray-700">
+                {isSearchMode ? "Search Results" : "Recommended"}
               </h2>
               {totalJobs > 0 && (
-                <span className="text-sm text-gray-500">
-                  {totalJobs} jobs found
-                </span>
+                <span className="text-xs text-gray-400">{totalJobs} jobs</span>
               )}
             </div>
 
             {loading ? (
-              // Loading skeleton
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="bg-white rounded-xl p-6 shadow-sm animate-pulse"
+                    className="bg-white rounded-lg border border-gray-100 p-4 animate-pulse"
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                      <div className="flex-1">
-                        <div className="h-5 bg-gray-200 rounded w-1/3 mb-2"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/4 mb-3"></div>
-                        <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                    <div className="flex gap-3">
+                      <div className="w-10 h-10 bg-gray-100 rounded" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-100 rounded w-2/5" />
+                        <div className="h-3 bg-gray-100 rounded w-1/4" />
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : jobs.length === 0 ? (
-              // Empty state
-              <div className="bg-white rounded-xl p-12 shadow-sm text-center">
-                <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No jobs found
-                </h3>
-                <p className="text-gray-500 mb-4">
-                  {searchKeyword || selectedLocation || selectedType
-                    ? "Try adjusting your search filters"
-                    : "Check back later for new opportunities"}
+              <div className="rounded-lg border border-gray-100 bg-white p-8 text-center">
+                <Briefcase className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                <p className="text-sm text-gray-500 mb-3">
+                  {isSearchMode
+                    ? "No jobs match your filters."
+                    : "No jobs right now."}
                 </p>
-                {(searchKeyword || selectedLocation || selectedType) && (
-                  <Button variant="outline" onClick={handleClearSearch}>
-                    Clear Filters
-                  </Button>
+                {isSearchMode && (
+                  <button
+                    type="button"
+                    onClick={handleClearSearch}
+                    className="text-sm text-red-600 hover:text-red-700"
+                  >
+                    Clear filters
+                  </button>
                 )}
               </div>
             ) : (
-              // Job list
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {jobs.map((job) => (
                   <JobCard
                     key={job.id}
@@ -378,24 +330,19 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {/* Load More */}
             {!loading && hasMore && jobs.length > 0 && (
-              <div className="text-center mt-8">
-                <Button
-                  variant="outline"
-                  className="px-8"
+              <div className="mt-6 text-center">
+                <button
+                  type="button"
                   onClick={handleLoadMore}
                   disabled={loadingMore}
+                  className="h-9 px-4 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 rounded-md hover:bg-gray-50 disabled:opacity-50"
                 >
                   {loadingMore ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    "Load More Jobs"
-                  )}
-                </Button>
+                    <Loader2 className="w-4 h-4 animate-spin inline mr-1.5" />
+                  ) : null}
+                  Load more
+                </button>
               </div>
             )}
           </div>
