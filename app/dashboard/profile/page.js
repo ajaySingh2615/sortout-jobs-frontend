@@ -204,7 +204,7 @@ function ProfileContent() {
             {/* Summary */}
             <SummarySection
               userId={user?.id}
-              summary={profile?.profileSummary}
+              summary={profile?.summary}
               onUpdate={handleUpdate}
             />
 
