@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,11 @@ export default function JobCard({
   const [isApplying, setIsApplying] = useState(false);
   const [isSaved, setIsSaved] = useState(job.isSaved || false);
   const [isApplied, setIsApplied] = useState(job.isApplied || false);
+
+  useEffect(() => {
+    setIsSaved(!!job.isSaved);
+    setIsApplied(!!job.isApplied);
+  }, [job.isSaved, job.isApplied]);
 
   const navigateToJob = () => {
     router.push(`/dashboard/jobs/${job.id}`);

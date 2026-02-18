@@ -39,11 +39,11 @@ export default function DashboardPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [searchPage, setSearchPage] = useState(1); // 1-based for search API
 
-  // Fetch jobs on mount
+  // Fetch jobs on mount and when user is available (so we get isSaved/isApplied for recommended)
   useEffect(() => {
-    fetchJobs();
+    fetchJobs(0, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user?.id]);
 
   // Fetch stats when user changes
   useEffect(() => {
@@ -96,6 +96,7 @@ export default function DashboardPage() {
       if (searchKeyword.trim()) searchRequest.keyword = searchKeyword.trim();
       if (selectedLocation) searchRequest.locationType = selectedLocation;
       if (selectedType) searchRequest.employmentType = selectedType;
+      if (user?.id) searchRequest.userId = user.id;
 
       const response = await jobService.searchJobs(searchRequest);
       const data = response.data.data;
