@@ -37,6 +37,7 @@ export default function DashboardPage() {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [searchPage, setSearchPage] = useState(1); // 1-based for search API
 
   // Fetch jobs on mount
   useEffect(() => {
@@ -52,34 +53,65 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
+  // Backend uses 1-based page; we keep page state 0-based for recommended list
   const fetchJobs = async (pageNum = 0, append = false) => {
     try {
       if (pageNum === 0) setLoading(true);
       else setLoadingMore(true);
 
+      const apiPage = pageNum + 1;
       let response;
       if (user?.id) {
-        // Get recommended jobs if user is logged in
-        response = await jobService.getRecommendedJobs(user.id, pageNum, 10);
+        response = await jobService.getRecommendedJobs(user.id, apiPage, 10);
       } else {
-        // Get all jobs for non-logged in users
-        response = await jobService.getJobs(pageNum, 10);
+        response = await jobService.getJobs(apiPage, 10);
       }
 
       const data = response.data.data;
 
       if (append) {
-        setJobs((prev) => [...prev, ...data.jobs]);
+        setJobs((prev) => [...prev, ...(data.jobs || [])]);
       } else {
         setJobs(data.jobs || []);
       }
 
-      setHasMore(data.hasNext);
-      setTotalJobs(data.totalElements);
+      setHasMore(data.hasNext ?? false);
+      setTotalJobs(data.totalElements ?? 0);
       setPage(pageNum);
     } catch (error) {
       console.error("Error fetching jobs:", error);
       toast.error("Failed to load jobs");
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const fetchSearchPage = async (pageNum = 1, append = false) => {
+    try {
+      if (pageNum === 1) setLoading(true);
+      else setLoadingMore(true);
+
+      const searchRequest = { page: pageNum, size: 10 };
+      if (searchKeyword.trim()) searchRequest.keyword = searchKeyword.trim();
+      if (selectedLocation) searchRequest.locationType = selectedLocation;
+      if (selectedType) searchRequest.employmentType = selectedType;
+
+      const response = await jobService.searchJobs(searchRequest);
+      const data = response.data.data;
+
+      if (append) {
+        setJobs((prev) => [...prev, ...(data.jobs || [])]);
+      } else {
+        setJobs(data.jobs || []);
+      }
+
+      setHasMore(data.hasNext ?? false);
+      setTotalJobs(data.totalElements ?? 0);
+      setSearchPage(pageNum);
+    } catch (error) {
+      console.error("Error searching jobs:", error);
+      toast.error("Failed to search jobs");
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -98,24 +130,9 @@ export default function DashboardPage() {
   const handleSearch = async () => {
     setIsSearching(true);
     try {
-      const searchRequest = {
-        keyword: searchKeyword || null,
-        locationType: selectedLocation || null,
-        employmentType: selectedType || null,
-        page: 0,
-        size: 10,
-      };
-
-      const response = await jobService.searchJobs(searchRequest);
-      const data = response.data.data;
-
-      setJobs(data.jobs || []);
-      setHasMore(data.hasNext);
-      setTotalJobs(data.totalElements);
-      setPage(0);
-    } catch (error) {
-      console.error("Error searching jobs:", error);
-      toast.error("Failed to search jobs");
+      await fetchSearchPage(1, false);
+    } catch {
+      // error already handled in fetchSearchPage
     } finally {
       setIsSearching(false);
     }
@@ -125,11 +142,18 @@ export default function DashboardPage() {
     setSearchKeyword("");
     setSelectedLocation("");
     setSelectedType("");
+    setSearchPage(1);
     fetchJobs(0, false);
   };
 
+  const isSearchMode = !!(searchKeyword.trim() || selectedLocation || selectedType);
+
   const handleLoadMore = () => {
-    fetchJobs(page + 1, true);
+    if (isSearchMode) {
+      fetchSearchPage(searchPage + 1, true);
+    } else {
+      fetchJobs(page + 1, true);
+    }
   };
 
   const handleSaveToggle = (jobId, isSaved) => {

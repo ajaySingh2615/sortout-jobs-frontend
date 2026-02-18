@@ -34,17 +34,18 @@ export default function SavedJobsPage() {
       if (pageNum === 0) setLoading(true);
       else setLoadingMore(true);
 
-      const response = await jobService.getSavedJobs(user.id, pageNum, 10);
+      const apiPage = pageNum + 1;
+      const response = await jobService.getSavedJobs(user.id, apiPage, 10);
       const data = response.data.data;
 
       if (append) {
-        setJobs(prev => [...prev, ...data.jobs]);
+        setJobs((prev) => [...prev, ...(data.jobs || [])]);
       } else {
         setJobs(data.jobs || []);
       }
 
-      setHasMore(data.hasNext);
-      setTotalJobs(data.totalElements);
+      setHasMore(data.hasNext ?? false);
+      setTotalJobs(data.totalElements ?? 0);
       setPage(pageNum);
     } catch (error) {
       console.error("Error fetching saved jobs:", error);
