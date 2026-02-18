@@ -55,6 +55,18 @@ export default function OnboardingPage() {
   const [roles, setRoles] = useState([]);
   const [skills, setSkills] = useState([]);
 
+  // If user already completed onboarding, send to dashboard
+  useEffect(() => {
+    if (!user?.id) return;
+    onboardingService
+      .getOnboardingStatus(user.id)
+      .then((res) => {
+        const data = res.data?.data ?? res.data;
+        if (data?.profileCompleted) router.replace("/dashboard");
+      })
+      .catch(() => {});
+  }, [user?.id, router]);
+
   useEffect(() => {
     const loadMasterData = async () => {
       try {

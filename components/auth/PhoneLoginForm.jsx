@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import authService from "@/services/auth.service";
+import onboardingService from "@/services/onboarding.service";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -154,15 +155,26 @@ export default function PhoneLoginForm() {
     try {
       const formattedPhone = formatPhone(phone);
       const response = await loginWithOtp(formattedPhone, otpString);
-      const userData = response.data?.user;
-      const isNewUser = userData?.name === "User" && !userData?.email;
+      // Backend returns { data: { user, accessToken, refreshToken } } or { user, ... }
+      const payload = response.data?.data ?? response.data;
+      const userData = payload?.user;
+      const userId = userData?.id;
 
       toast.success("Login successful! Welcome to SortOut Jobs");
 
-      if (isNewUser) {
-        router.push("/onboarding");
+      // Use backend onboarding status instead of heuristic (phone-only users keep name "User" and email null)
+      if (userId) {
+        try {
+          const statusRes = await onboardingService.getOnboardingStatus(userId);
+          const statusData = statusRes.data?.data ?? statusRes.data;
+          const profileCompleted = statusData?.profileCompleted === true;
+          router.push(profileCompleted ? "/dashboard" : "/onboarding");
+        } catch (_) {
+          // If status check fails (e.g. network), send to onboarding to be safe
+          router.push("/onboarding");
+        }
       } else {
-        router.push("/dashboard");
+        router.push("/onboarding");
       }
     } catch (err) {
       const errorMsg = err.response?.data?.message;
