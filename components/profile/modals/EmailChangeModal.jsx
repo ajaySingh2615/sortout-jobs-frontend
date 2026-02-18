@@ -106,12 +106,12 @@ export default function EmailChangeModal({
 
   const handleVerify = async (e) => {
     e.preventDefault();
-    if (!otp) return;
+    if (!otp || !email) return;
 
     setLoading(true);
     setError("");
     try {
-      await onVerifyOtp(otp);
+      await onVerifyOtp(email, otp);
       onClose(); // Close on success
     } catch (err) {
       setError(err?.response?.data?.message || "Invalid OTP");

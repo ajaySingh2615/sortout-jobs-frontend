@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Phone, Mail } from "lucide-react";
 import onboardingService from "@/services/onboarding.service";
 
 export default function BasicDetailsModal({
   isOpen,
   onClose,
   onSave,
+  onOpenEmailModal,
   initialData,
 }) {
   const [formData, setFormData] = useState({
@@ -30,15 +31,17 @@ export default function BasicDetailsModal({
 
   useEffect(() => {
     if (initialData) {
+      const cityId = initialData.preferredCityId ?? initialData.cityId;
+      const localityId = initialData.preferredLocalityId ?? initialData.localityId;
       setFormData({
         fullName: initialData.fullName || "",
-        cityId: initialData.cityId || "",
-        localityId: initialData.localityId || "",
-        headline: initialData?.resumeHeadline || "",
+        cityId: cityId ? String(cityId) : "",
+        localityId: localityId ? String(localityId) : "",
+        headline: initialData?.resumeHeadline ?? initialData?.headline ?? "",
       });
 
-      if (initialData.cityId) {
-        loadLocalities(initialData.cityId);
+      if (cityId) {
+        loadLocalities(cityId);
       }
     }
   }, [initialData, isOpen]);
@@ -134,6 +137,50 @@ export default function BasicDetailsModal({
               className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-red-500 outline-none"
               required
             />
+          </div>
+
+          {/* Phone (read-only) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number
+            </label>
+            <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700">
+              <Phone className="w-4 h-4 text-gray-500 shrink-0" />
+              <span className="text-sm">
+                {initialData?.phone || "Not set"}
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Phone is used for login and cannot be changed here.
+            </p>
+          </div>
+
+          {/* Email (read-only + Add/Change) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 flex-1 min-w-0">
+                <Mail className="w-4 h-4 text-gray-500 shrink-0" />
+                <span className="text-sm truncate">
+                  {initialData?.email || "Not set"}
+                </span>
+                {initialData?.emailVerified && (
+                  <span className="text-xs text-green-600 shrink-0">Verified</span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => onOpenEmailModal?.()}
+                className="px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg border border-red-200 transition-colors"
+              >
+                {initialData?.email ? "Change email" : "Add email"}
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Add or change email with OTP verification.
+            </p>
           </div>
 
           {/* Location */}

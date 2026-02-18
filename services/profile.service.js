@@ -36,8 +36,8 @@ const profileService = {
     api.put(`/profile/${userId}/basic`, data),
   initiateEmailChange: (userId, newEmail) =>
     api.post(`/profile/${userId}/email/initiate`, { newEmail }),
-  verifyEmailChange: (userId, otp) =>
-    api.post(`/profile/${userId}/email/verify`, { otp }),
+  verifyEmailChange: (userId, newEmail, otp) =>
+    api.post(`/profile/${userId}/email/verify`, { newEmail, otp }),
 
   // Employment CRUD
   // Get all employments
@@ -109,7 +109,7 @@ const profileService = {
   // Upload resume
   uploadResume: (userId, file) => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("resume", file);
     return api.post(`/profile/${userId}/resume`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });

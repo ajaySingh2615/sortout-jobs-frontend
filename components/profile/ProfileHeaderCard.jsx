@@ -75,17 +75,14 @@ export default function ProfileHeaderCard({
     return response; // Return response so modal can get expiry time
   };
 
-  const handleVerifyEmailOtp = async (otp) => {
-    const response = await profileService.verifyEmailChange(
+  const handleVerifyEmailOtp = async (newEmail, otp) => {
+    await profileService.verifyEmailChange(
       profile.userId,
+      newEmail,
       otp
     );
-    const { accessToken, newEmail } = response.data.data;
-
-    // Update stored token with new one
-    localStorage.setItem("accessToken", accessToken);
-
     toast.success("Email updated successfully");
+    setShowEmailModal(false);
     onUpdate();
   };
 
@@ -213,8 +210,7 @@ export default function ProfileHeaderCard({
               <span className="text-sm font-medium">
                 {profile?.email || "Not set"}
               </span>
-              {profile?.emailVerified &&
-                !profile?.email?.endsWith("@phone.local") && (
+              {profile?.emailVerified && (
                   <CheckCircle2
                     className="w-3 h-3 text-green-500 ml-1"
                     title="Email verified"
@@ -236,15 +232,22 @@ export default function ProfileHeaderCard({
         isOpen={showBasicModal}
         onClose={() => setShowBasicModal(false)}
         onSave={handleSaveBasicDetails}
+        onOpenEmailModal={() => {
+          setShowBasicModal(false);
+          setShowEmailModal(true);
+        }}
         initialData={{
           fullName: profile?.fullName,
-          cityId: profile?.cityId,
-          localityId: profile?.localityId,
+          cityId: profile?.preferredCityId ?? profile?.cityId,
+          localityId: profile?.preferredLocalityId ?? profile?.localityId,
           hasExperience: profile?.hasExperience,
           experienceLevel: profile?.experienceLevel,
           currentSalary: profile?.currentSalary,
-          resumeHeadline: profile?.resumeHeadline,
+          resumeHeadline: profile?.resumeHeadline ?? profile?.headline,
           noticePeriod: profile?.noticePeriod,
+          phone: profile?.phone,
+          email: profile?.email,
+          emailVerified: profile?.emailVerified,
         }}
       />
 
